@@ -2,7 +2,6 @@ import React, { useContext, useEffect,useState} from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/core';
 import { Link } from 'gatsby';
-import throttle from "lodash/throttle";
 
 import Headings from '@components/Headings';
 import Image, { ImagePlaceholder } from '@components/Image';
@@ -67,36 +66,6 @@ const ArticlesList: React.FC<ArticlesListProps> = ({
   useEffect(() => {
 
     getGridLayout()
-
-    const handleResize = throttle(() => {
-      const width = document.getElementById("Nav__Container").getBoundingClientRect().width;
-      console.log(width)
-      // const el = progressRef.current;
-      // const top = el.getBoundingClientRect().top;
-      // const height = el.offsetHeight;
-      // const windowHeight =
-      //   window.innerHeight || document.documentElement.clientHeight;
-
-      // const percentComplete = (window.scrollY / contentHeight) * 100;
-
-      // setProgress(clamp(+percentComplete.toFixed(2), 0, 105));
-
-      // if (top + window.scrollY < imageOffsetFromTopOfWindow) {
-      //   return setShouldFixAside(false);
-      // }
-
-      // if (top + height / 2 <= windowHeight / 2) {
-      //   return setShouldFixAside(true);
-      // }
-    }, 16);
-
-    window.addEventListener("resize", handleResize);
-    window.addEventListener("load", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("load", handleResize);
-    };
 
   }, []);
 

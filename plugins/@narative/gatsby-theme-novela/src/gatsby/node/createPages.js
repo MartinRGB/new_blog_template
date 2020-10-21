@@ -222,8 +222,6 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
       `);
     }
 
-    console.log('current Tag ' + article.tag);
-
     // console.log('tagsWithArticle' + index + ' ' + tagsWithArticle[index].tag + ' ' +  article.title);
     // console.log('tagsWithArticle' + index + ' ' + tagsWithArticle[index].tag + ' ' +  article.title);
 
@@ -251,6 +249,7 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
         id: article.id,
         title: article.title,
         tag: markdownRemarks[index].tag,
+        headings: markdownRemarks[index].headings,
         canonicalUrl: article.canonical_url,
         mailchimp,
         next,

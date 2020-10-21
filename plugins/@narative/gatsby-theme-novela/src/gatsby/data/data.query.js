@@ -31,6 +31,7 @@ module.exports.local = {
           timeToRead
           excerpt
           tag
+          headings
           canonical_url
           subscription
           body
@@ -126,6 +127,7 @@ module.exports.contentful = {
           }
           excerpt
           tag
+          headings
           title
           slug
           secret

@@ -99,6 +99,7 @@ module.exports = ({ node, actions, getNode, createNodeId }, themeOptions) => {
       ),
       title: node.frontmatter.title,
       tag: node.frontmatter.tag,
+      headings: node.headings,
       subscription: node.frontmatter.subscription !== false,
       canonical_url: node.frontmatter.canonical_url,
     };
