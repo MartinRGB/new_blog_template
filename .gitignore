@@ -15,6 +15,7 @@
 
 # dependencies
 /node_modules
+/plugins/@narative/gatsby-theme-novela/node_modules
 .package.swp
 package-lock.json
 

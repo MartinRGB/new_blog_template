@@ -138,7 +138,7 @@ const NavigationHeader: React.FC<{}> = () => {
   return (
     <BlurContainer ref={blurContainerRef} shouldFixHeader={shouldFixHeader} headerOffset={headerOffset}>
       <Section>
-        <NavContainer >
+        <NavContainer id="Nav__Container">
           <LogoLink ref={logoGraphicRef}
             to={rootPath || basePath}
             data-a11y="false"

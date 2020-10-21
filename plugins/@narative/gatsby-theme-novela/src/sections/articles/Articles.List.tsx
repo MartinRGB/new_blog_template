@@ -1,7 +1,8 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect,useState} from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/core';
 import { Link } from 'gatsby';
+import throttle from "lodash/throttle";
 
 import Headings from '@components/Headings';
 import Image, { ImagePlaceholder } from '@components/Image';
@@ -39,6 +40,9 @@ const ArticlesList: React.FC<ArticlesListProps> = ({
   articles,
   alwaysShowAllDetails,
 }) => {
+
+  const [contentWidth, setContentWidth] = useState<number>(0);
+
   if (!articles) return null;
 
   const hasOnlyOneArticle = articles.length === 1;
@@ -52,20 +56,73 @@ const ArticlesList: React.FC<ArticlesListProps> = ({
    * This makes it simpler to create the grid we want
    */
   const articlePairs = articles.reduce((result, value, index, array) => {
-    if (index % 2 === 0) {
-      result.push(array.slice(index, index + 2));
-    }
+    // if (index % 2 === 0) {
+    //   result.push(array.slice(index, index + 2));
+    // }
+    result.push(array[index])
+    console.log(result);
     return result;
   }, []);
 
-  useEffect(() => getGridLayout(), []);
+  useEffect(() => {
+
+    getGridLayout()
+
+    const handleResize = throttle(() => {
+      const width = document.getElementById("Nav__Container").getBoundingClientRect().width;
+      console.log(width)
+      // const el = progressRef.current;
+      // const top = el.getBoundingClientRect().top;
+      // const height = el.offsetHeight;
+      // const windowHeight =
+      //   window.innerHeight || document.documentElement.clientHeight;
+
+      // const percentComplete = (window.scrollY / contentHeight) * 100;
+
+      // setProgress(clamp(+percentComplete.toFixed(2), 0, 105));
+
+      // if (top + window.scrollY < imageOffsetFromTopOfWindow) {
+      //   return setShouldFixAside(false);
+      // }
+
+      // if (top + height / 2 <= windowHeight / 2) {
+      //   return setShouldFixAside(true);
+      // }
+    }, 16);
+
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("load", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("load", handleResize);
+    };
+
+  }, []);
+
 
   return (
-    <ArticlesListContainer
+    <ArticlesListContainer id="Articles__Container"
       style={{ opacity: hasSetGridLayout ? 1 : 0 }}
       alwaysShowAllDetails={alwaysShowAllDetails}
+      gridlayout={gridLayout}
     >
-      {articlePairs.map((ap, index) => {
+      {articlePairs.map((el,index) =>{
+        const listIndex = index;
+
+        return (
+          <List
+            key={index}
+            gridlayout={gridLayout}
+            hasOnlyOneArticle={hasOnlyOneArticle}
+            reverse={false}
+            listIndex={listIndex}
+          >
+            <ListItem article={el} narrow={false} />
+          </List>
+        );
+      })}
+      {/* {articlePairs.map((ap, index) => {
         const isEven = index % 2 !== 0;
         const isOdd = index % 2 !== 1;
 
@@ -80,7 +137,7 @@ const ArticlesList: React.FC<ArticlesListProps> = ({
             <ListItem article={ap[1]} narrow={isOdd} />
           </List>
         );
-      })}
+      })} */}
     </ArticlesListContainer>
   );
 };
@@ -153,6 +210,60 @@ const limitToTwoLines = css`
   `}
 `;
 
+const flexUlCSS = css`
+    display: flex;
+    align-content: flex-start;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+`
+
+const flexListCSS = p => css`
+    display: inline-block;
+    position: relative;
+    background-color: white;
+    vertical-align: top;
+    text-align: left;
+    height: 490px;
+    margin: 20px;
+    box-shadow: 0 20px 20px rgba(0,0,0,.08);
+    white-space: normal;
+    -webkit-transition: box-shadow 200ms cubic-bezier(.02, .01, .47, 1), transform 200ms cubic-bezier(.02, .01, .47, 1);
+    -moz-transition: box-shadow 200ms cubic-bezier(.02, .01, .47, 1), transform 200ms cubic-bezier(.02, .01, .47, 1);
+    transition: box-shadow 200ms cubic-bezier(.02, .01, .47, 1), transform 200ms cubic-bezier(.02, .01, .47, 1);
+    color: #4B4F56;
+    width:353px;
+    margin-left:${p.listIndex%3 === 0 ? '0px' : (p.listIndex%3 === 1 ? '20px':'20px' )};
+    margin-right:${p.listIndex%3 === 0 ? '20px' : (p.listIndex%3 === 1 ? '20px':'0px' )};
+    flex: 1 0 calc(33% - 27px);
+    ${mediaqueries.desktop`
+      width:308px;
+      flex: 1 0 calc(50% - 20px);
+      margin-left:${p.listIndex%2 === 0 ? '0px' : '20px'};
+      margin-right:${p.listIndex%2 === 0 ? '20px' : '0px'};
+    `}
+  
+    ${mediaqueries.tablet`
+      width:487px;
+      flex: 1 0 100%;
+      margin-left:0;
+      margin-right:0;
+      height:100%;
+    `}
+  
+    ${mediaqueries.phablet`
+      width:460px;
+      margin-left:0;
+      margin-right:0;
+      height:100%;
+    `}
+
+`
+
+
+    // margin-left: ${p => (p.gridlayout === 'tiles'?(p.listIndex === 0 ? '0px' : (p.listIndex === 1 ? '20px':'20px' )):'0px')};
+    // margin-right: ${p => (p.gridlayout === 'tiles'?(p.listIndex === 0 ? '20px' : (p.listIndex === 1 ? '20px':'0px' )):'0px')};
+
 const showDetails = css`
   p {
     display: -webkit-box;
@@ -163,9 +274,13 @@ const showDetails = css`
   }
 `;
 
-const ArticlesListContainer = styled.div<{ alwaysShowAllDetails?: boolean }>`
+const ArticlesListContainer = styled.div<{ 
+  alwaysShowAllDetails?: boolean;
+  gridlayout: string;
+}>`
   transition: opacity 0.25s;
   ${p => p.alwaysShowAllDetails && showDetails}
+  ${p => (p.gridlayout === 'tiles' ? flexUlCSS : null)}
 `;
 
 const listTile = p => css`
@@ -265,8 +380,10 @@ const List = styled.div<{
   reverse: boolean;
   gridlayout: string;
   hasOnlyOneArticle: boolean;
+  listIndex: number;
 }>`
-  ${p => (p.gridlayout === 'tiles' ? listTile : listRow)}
+  // ${p => (p.gridlayout === 'tiles' ? listTile : listRow)}
+  ${p => (p.gridlayout === 'tiles' ? flexListCSS : listRow)}
 `;
 
 const Item = styled.div<{ gridlayout: string;hasheroimage:boolean; }>`
