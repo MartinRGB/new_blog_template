@@ -7,6 +7,7 @@
 /.tmp
 /build
 /dist
+/public
 
 # dependencies
 /node_modules
