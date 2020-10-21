@@ -2,6 +2,10 @@
 # Project Ignores                       #
 #---------------------------------------#
 
+# cache
+
+/.cache
+
 # output
 /.temp
 /.tmp
@@ -12,6 +16,7 @@
 # dependencies
 /node_modules
 .package.swp
+package-lock.json
 
 # linters
 .eslintcache/
