@@ -2,8 +2,9 @@
 title: My first post using Novela by Narative2
 author: Dennis Brotzky
 date: 2019-04-30
-tag: d2
+tag: Tag2 Tag4
 excerpt: With the growing community interest in Gatsby, we hope to create more resources that make it easier for anyone to grasp the power of this incredible tool.
+hero: ./images/5.jpeg
 ---
 
 My first post using `@narative/gatsby-theme-novela`. Novela is built by the team at [Narative](https://narative.co), and built for everyone that loves the web.

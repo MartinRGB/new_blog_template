@@ -164,7 +164,7 @@ const HeroImage = styled.div`
   display: block;
   position: relative;
   z-index: 1;
-  border-radius: 24px;
+  border-radius: 12px;
   width: 100%;
   max-width: 680px;
   overflow: hidden;

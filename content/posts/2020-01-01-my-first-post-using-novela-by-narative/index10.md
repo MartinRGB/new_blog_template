@@ -3,7 +3,7 @@ title: My first post using Novela by Narative10
 author: Dennis Brotzky
 tag: d10
 date: 2019-05-30
-hero: ./images/hero.jpg
+hero: ./images/article-image-2.jpg
 ---
 
 My first post using `@narative/gatsby-theme-novela`. Novela is built by the team at [Narative](https://narative.co), and built for everyone that loves the web.

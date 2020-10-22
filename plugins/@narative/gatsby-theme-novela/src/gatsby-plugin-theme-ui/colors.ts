@@ -2,11 +2,12 @@ import prism from "./prism";
 
 export default {
   prism,
-
+  special_primary: "#000",
   primary: "#000",
   white: "#fff",
   secondary: "#73737D",
   grey: "#73737D",
+  light_grey: "#55565b12",
   background: "#fafafa",
   accent: "#6166DC",
   hover: "rgba(0, 0, 0, 0.07)",
@@ -23,6 +24,8 @@ export default {
   modes: {
     dark: {
       grey: "#73737D",
+      light_grey: "#73737d52",
+      special_primary: "#000",
       primary: "#fff",
       secondary: "#fff",
       accent: "#E9DAAC",
@@ -33,7 +36,7 @@ export default {
       articleText: "#fff",
       track: "rgba(255, 255, 255, 0.3)",
       progress: "#fff",
-      card: "#1D2128",
+      card: "#1e2733",
       error: "#EE565B",
       success: "#46B17B",
       errorBackground: "rgba(238, 86, 91, 0.1)",

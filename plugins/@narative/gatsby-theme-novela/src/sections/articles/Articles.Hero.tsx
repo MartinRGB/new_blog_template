@@ -94,7 +94,8 @@ const SubheadingContainer = styled.div`
   `};
 
   ${mediaqueries.phablet`
-    display: none;
+    // display: none;
+    margin-top:0px;
   `};
 `;
 
@@ -103,7 +104,7 @@ const GridControlsContainer = styled.div`
   align-items: center;
 
   ${mediaqueries.tablet`
-    display: none;
+    //display: none;
   `};
 `;
 

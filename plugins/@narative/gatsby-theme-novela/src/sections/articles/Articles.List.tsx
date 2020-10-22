@@ -131,17 +131,14 @@ const ListItem: React.FC<ArticlesListItemProps> = ({ article, narrow }) => {
   return (
     <ArticleLink to={article.slug} gridlayout={gridLayout} data-a11y="false">
       <Item gridlayout={gridLayout} hasheroimage={hasHeroImage}>
-        {/* <ImageContainer narrow={narrow} gridLayout={gridLayout}>
-          {hasHeroImage ? <Image src={imageSource} /> : <ImagePlaceholder />}
-        </ImageContainer> */}
 
-        {hasHeroImage ? 
-          <ImageContainer narrow={narrow} gridlayout={gridLayout}>
-            <Image src={imageSource} />
-          </ImageContainer> : 
-        <div></div>}
-
-        <div>
+        <TopContainer gridlayout={gridLayout}>
+          {gridLayout === 'tiles' ? 
+             <div></div>: 
+            <MetaData gridlayout={gridLayout} isTop={true}>
+             <TagData gridlayout={gridLayout}># {article.tag}</TagData>
+            </MetaData>
+          }
           <Title dark hasOverflow={hasOverflow} gridLayout={gridLayout}>
             {article.title}
           </Title>
@@ -149,14 +146,33 @@ const ListItem: React.FC<ArticlesListItemProps> = ({ article, narrow }) => {
             narrow={narrow}
             hasOverflow={hasOverflow}
             gridLayout={gridLayout}
+            hasheroimage={hasHeroImage}
           >
             {article.excerpt}
           </Excerpt>
-          <MetaData>
-            <TagData>{article.tag}</TagData>
-            <DateData>{article.date} · {article.timeToRead} min read</DateData>
-          </MetaData>
-        </div>
+          {gridLayout === 'tiles' ? 
+             <div></div>: 
+            <MetaData gridlayout={gridLayout} isTop={false}>
+             <DateData gridlayout={gridLayout}>{article.date} · {article.timeToRead} min read</DateData>
+            </MetaData>
+          }
+        </TopContainer>
+
+        {hasHeroImage ? 
+          <ImageContainer narrow={narrow} gridlayout={gridLayout}>
+            <Image src={imageSource} />
+          </ImageContainer> : 
+        <div></div>}
+
+        {gridLayout === 'tiles' ? 
+            <MetaData gridlayout={gridLayout} isTop={true}>
+                 <TagData gridlayout={gridLayout}># {article.tag}</TagData>
+                 <DateData gridlayout={gridLayout}>{article.date} · {article.timeToRead} min read</DateData>
+            </MetaData> : 
+        <div></div>}
+
+ 
+
       </Item>
     </ArticleLink>
   );
@@ -165,19 +181,28 @@ const ListItem: React.FC<ArticlesListItemProps> = ({ article, narrow }) => {
 const wide = '1fr';
 const narrow = '457px';
 
-const limitToTwoLines = css`
-  text-overflow: ellipsis;
-  overflow-wrap: normal;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  display: -webkit-box;
-  white-space: normal;
-  overflow: hidden;
+// ####### ArticlesListContainer #######
 
-  ${mediaqueries.phablet`
-    -webkit-line-clamp: 3;
-  `}
+const ArticlesListContainer = styled.div<{ 
+  alwaysShowAllDetails?: boolean;
+  gridlayout: string;
+}>`
+  transition: opacity 0.3s cubic-bezier(.02, .01, .47, 1);
+  ${p => p.alwaysShowAllDetails && showDetails}
+  ${p => (p.gridlayout === 'tiles' ? flexUlCSS : null)}
 `;
+
+const showDetails = css`
+  p {
+    display: -webkit-box;
+  }
+
+  h2 {
+    margin-bottom: 10px;
+  }
+`;
+
+
 
 const flexUlCSS = css`
     display: flex;
@@ -185,31 +210,63 @@ const flexUlCSS = css`
     align-items: flex-start;
     justify-content: flex-start;
     flex-wrap: wrap;
+
+    ${mediaqueries.phablet`
+      margin: 0 1em 0 1em;
+    `}
 `
+
+
+// ####### list #######
+
+const List = styled.div<{
+  reverse: boolean;
+  gridlayout: string;
+  hasOnlyOneArticle: boolean;
+  listIndex: number;
+}>`
+  // ${p => (p.gridlayout === 'tiles' ? listTile : listRow)}
+  ${p => (p.gridlayout === 'tiles' ? flexListCSS : listRow)}
+`;
+
 
 const flexListCSS = p => css`
     display: inline-block;
     position: relative;
-    background-color: white;
+    background-color: ${p.theme.colors.card};;
     vertical-align: top;
     text-align: left;
     height: 490px;
     margin: 20px;
     box-shadow: 0 20px 20px rgba(0,0,0,.08);
+    border-radius:12px;
+    overflow: hidden;
     white-space: normal;
-    -webkit-transition: box-shadow 200ms cubic-bezier(.02, .01, .47, 1), transform 200ms cubic-bezier(.02, .01, .47, 1);
-    -moz-transition: box-shadow 200ms cubic-bezier(.02, .01, .47, 1), transform 200ms cubic-bezier(.02, .01, .47, 1);
-    transition: box-shadow 200ms cubic-bezier(.02, .01, .47, 1), transform 200ms cubic-bezier(.02, .01, .47, 1);
+    -webkit-transition: box-shadow 300ms cubic-bezier(.02, .01, .47, 1), transform 300ms cubic-bezier(.02, .01, .47, 1);
+    -moz-transition: box-shadow 300ms cubic-bezier(.02, .01, .47, 1), transform 300ms cubic-bezier(.02, .01, .47, 1);
+    transition: box-shadow 300ms cubic-bezier(.02, .01, .47, 1), transform 300ms cubic-bezier(.02, .01, .47, 1);
     color: #4B4F56;
     width:353px;
     margin-left:${p.listIndex%3 === 0 ? '0px' : (p.listIndex%3 === 1 ? '20px':'20px' )};
     margin-right:${p.listIndex%3 === 0 ? '20px' : (p.listIndex%3 === 1 ? '20px':'0px' )};
     flex: 1 0 calc(33% - 27px);
+
+    &:hover,&:focus{
+      box-shadow: 0 40px 40px rgba(0,0,0,.16);
+      transform: translate(0,-20px);
+    }
+
+
     ${mediaqueries.desktop`
       width:308px;
       flex: 1 0 calc(50% - 20px);
       margin-left:${p.listIndex%2 === 0 ? '0px' : '20px'};
       margin-right:${p.listIndex%2 === 0 ? '20px' : '0px'};
+
+      // &:hover,&:focus{
+      //   box-shadow: none;
+      //   transform: translate(0,-0px);
+      // }
     `}
   
     ${mediaqueries.tablet`
@@ -224,33 +281,17 @@ const flexListCSS = p => css`
       width:460px;
       margin-left:0;
       margin-right:0;
-      height:100%;
+      background-color: transparent;
+      box-shadow: none;
+      overflow: visible;
+      margin: 0px;
+      &:hover,&:focus{
+          box-shadow: none;
+          transform: translate(0,-0px);
+      }
     `}
 
 `
-
-
-    // margin-left: ${p => (p.gridlayout === 'tiles'?(p.listIndex === 0 ? '0px' : (p.listIndex === 1 ? '20px':'20px' )):'0px')};
-    // margin-right: ${p => (p.gridlayout === 'tiles'?(p.listIndex === 0 ? '20px' : (p.listIndex === 1 ? '20px':'0px' )):'0px')};
-
-const showDetails = css`
-  p {
-    display: -webkit-box;
-  }
-
-  h2 {
-    margin-bottom: 10px;
-  }
-`;
-
-const ArticlesListContainer = styled.div<{ 
-  alwaysShowAllDetails?: boolean;
-  gridlayout: string;
-}>`
-  transition: opacity 0.25s;
-  ${p => p.alwaysShowAllDetails && showDetails}
-  ${p => (p.gridlayout === 'tiles' ? flexUlCSS : null)}
-`;
 
 const listTile = p => css`
   position: relative;
@@ -283,6 +324,36 @@ const listTile = p => css`
   `}
 `;
 
+// If only 1 article, dont create 2 rows.
+const listRow = p => css`
+  display: grid;
+  // grid-template-rows: ${p.hasOnlyOneArticle ? '1fr' : '1fr 1fr'};
+  grid-template-rows: 1fr;
+
+  ${mediaqueries.phablet`
+    margin: 1em;
+    margin-bottom: 60px;
+    margin-top: 0px;
+  `}
+`;
+
+// ####### listItem #######
+
+const Item = styled.div<{ gridlayout: string;hasheroimage:boolean; }>`
+  ${p => (p.gridlayout === 'rows' ? listItemRow : listItemTile)}
+  height: 100%;
+  
+  ${mediaqueries.tablet`
+  
+  `}
+
+  ${mediaqueries.phablet`
+    border-radius:12px;
+    overflow:hidden;
+    //background: white;
+  `}
+`;
+
 const listItemRow = p => css`
   display: grid;
   grid-template-rows: 1fr;
@@ -310,7 +381,10 @@ const listItemRow = p => css`
     box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.2);
     // border-bottom-right-radius: 5px;
     // border-bottom-left-radius: 5px;
-    border-radius:25px;
+    border-radius:12px;
+    padding: 20px;
+    padding-top: 0px;
+    padding-bottom: 0px;
   `}
 `;
 
@@ -318,7 +392,7 @@ const listItemTile = p => css`
   position: relative;
 
   ${mediaqueries.tablet`
-    margin-bottom: 60px;
+    margin-bottom: ${(p.gridlayout === 'tiles' ? '0px' : '60px')};
   `}
 
   @media (max-width: 540px) {
@@ -326,7 +400,7 @@ const listItemTile = p => css`
   }
 
   ${mediaqueries.phablet`
-    margin-bottom: 40px;
+    margin-bottom: 50px;
     box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.2);
     // border-bottom-right-radius: 5px;
     // border-bottom-left-radius: 5px;
@@ -334,82 +408,117 @@ const listItemTile = p => css`
   `}
 `;
 
-// If only 1 article, dont create 2 rows.
-const listRow = p => css`
-  display: grid;
-  // grid-template-rows: ${p.hasOnlyOneArticle ? '1fr' : '1fr 1fr'};
-  grid-template-rows: 1fr;
-
-  // ${mediaqueries.phablet`
-  //   grid-template-rows:0fr;
-  // `}
-`;
-
-const List = styled.div<{
-  reverse: boolean;
-  gridlayout: string;
-  hasOnlyOneArticle: boolean;
-  listIndex: number;
+const TopContainer = styled.div<{
+  gridlayout:string
 }>`
-  // ${p => (p.gridlayout === 'tiles' ? listTile : listRow)}
-  ${p => (p.gridlayout === 'tiles' ? flexListCSS : listRow)}
-`;
+  padding-left: ${p => (p.gridlayout === 'tiles' ? '20px' : '0px')};
+  padding-right: ${p => (p.gridlayout === 'tiles' ? '20px' : '0px')};
+  padding-top: ${p => (p.gridlayout === 'tiles' ? '24px' : '0px')};
+  margin-bottom: ${p => (p.gridlayout === 'tiles' ? '16px' : '0px')};
 
-const Item = styled.div<{ gridlayout: string;hasheroimage:boolean; }>`
-  ${p => (p.gridlayout === 'rows' ? listItemRow : listItemTile)}
-
-  // background:${p => (p.hasheroimage? 'none' : 'white')};
-  // border-radius:${p => (p.hasheroimage? '0px' : '25px')};
-  // height:${p => (p.hasheroimage? '100%' : '280px')};
-  // box-shadow: ${p => (p.hasheroimage? 'none' : '0 30px 60px -10px rgba(0,0,0,0.3), 0 18px 36px -18px rgba(0,0,0,0.33)')};
-
-  ${mediaqueries.tablet`
-
-  `}
-
-  ${mediaqueries.phablet`
-    border-radius:25px;
-    overflow:hidden;
-  `}
-`;
+`
+// ####### ImageContainer #######
 
 const ImageContainer = styled.div<{ narrow: boolean; gridlayout: string }>`
   position: relative;
-  border-radius:24px;
   overflow:hidden;
-  height: ${p => (p.gridlayout === 'tiles' ? '280px' : '220px')};
-  box-shadow: 0 30px 60px -10px rgba(0, 0, 0, ${p => (p.narrow ? 0.22 : 0.3)}),
-    0 18px 36px -18px rgba(0, 0, 0, ${p => (p.narrow ? 0.25 : 0.33)});
-  margin-bottom: ${p => (p.gridlayout === 'tiles' ? '30px' : 0)};
-  transition: transform 0.3s var(--ease-out-quad),
-    box-shadow 0.3s var(--ease-out-quad);
+  height: auto;
+  transition: transform 0.3s cubic-bezier(.02, .01, .47, 1),
+    box-shadow 0.3s cubic-bezier(.02, .01, .47, 1);
 
   & > div {
     height: 100%;
   }
 
   ${mediaqueries.tablet`
-    height: 200px;
-    margin-bottom: 35px;
-    border-radius:24px;
+    // margin-bottom: 50px;
   `}
 
+  ${p => (p.gridlayout === 'tiles' ? imageContainerTilesCSS : imageContainerRowsCSS)}
+
+`;
+
+const imageContainerTilesCSS = css`
+  border-radius:0px;
+  max-height:235px;
+  box-shadow:0 30px 60px -10px rgba(0, 0, 0, 0),
+  0 18px 36px -18px rgba(0, 0, 0, 0);
+  padding-left:20px;
+  padding-right:20px;
+
+`;
+
+const imageContainerRowsCSS = css`
+  border-radius:12px;
+  max-height:inherit;
+  box-shadow:0 30px 60px -10px rgba(0, 0, 0, 0.12),0 18px 36px -18px rgba(0, 0, 0, 0.15);
+  padding-left:0px;
+  padding-right:0px;
+
   ${mediaqueries.phablet`
-    overflow: hidden;
-    margin-bottom: 0;
-    box-shadow: none;
-    // border-top-right-radius: 5px;
-    // border-top-left-radius: 5px;
-    border-radius:0px;
+    border-radius: 0px;
+    max-height: 235px;
+    margin-bottom: 53px;
+    margin-top: -17px;
+    box-shadow:0 30px 60px -10px rgba(0, 0, 0, 0.0),0 18px 36px -18px rgba(0, 0, 0, 0.0);
+  `}
+}
+`;
+
+
+// ####### Title #######
+
+const limitToTweleveLines = css`
+  text-overflow: ellipsis;
+  overflow-wrap: normal;
+  -webkit-line-clamp: 18;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  white-space: normal;
+  overflow: hidden;
+
+  ${mediaqueries.phablet`
+    -webkit-line-clamp: 12;
+
+    margin-bottom:33px;
   `}
 `;
+
+const limitToTwoLines = css`
+  text-overflow: ellipsis;
+  overflow-wrap: normal;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  white-space: normal;
+  overflow: hidden;
+
+  ${mediaqueries.phablet`
+    -webkit-line-clamp: 3;
+  `}
+`;
+
+const limitToFourLines = css`
+  text-overflow: ellipsis;
+  overflow-wrap: normal;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  white-space: normal;
+  overflow: hidden;
+
+  ${mediaqueries.phablet`
+    -webkit-line-clamp: 3;
+  `}
+`;
+
 
 const Title = styled(Headings.h2)`
   font-size: 21px;
   font-family: ${p => p.theme.fonts.serif};
   margin-bottom: ${p =>
     p.hasOverflow && p.gridLayout === 'tiles' ? '35px' : '10px'};
-  transition: color 0.3s ease-in-out;
+  transition: color 0.3s cubic-bezier(.02, .01, .47, 1);
   ${limitToTwoLines};
 
   ${mediaqueries.desktop`
@@ -422,61 +531,117 @@ const Title = styled(Headings.h2)`
 
   ${mediaqueries.phablet`
     font-size: 22px;  
-    padding: 30px 20px 0;
+    // padding: 30px 20px 0;
     margin-bottom: 10px;
     -webkit-line-clamp: 3;
   `}
 `;
 
+// ####### Excerpt #######
+
 const Excerpt = styled.p<{
   hasOverflow: boolean;
   narrow: boolean;
   gridLayout: string;
+  hasheroimage: boolean;
 }>`
-  ${limitToTwoLines};
-  font-size: 16px;
+  ${p => (p.hasheroimage? limitToFourLines : limitToTweleveLines)};
+  font-size: 14px;
+  text-align: justify;
   margin-bottom: 10px;
   color: ${p => p.theme.colors.grey};
   display: ${p => (p.hasOverflow && p.gridLayout === 'tiles' ? 'none' : 'box')};
   max-width: ${p => (p.narrow ? '415px' : '515px')};
 
-  ${mediaqueries.desktop`
-    display: -webkit-box;
-  `}
+`;
 
-  ${mediaqueries.phablet`
-    margin-bottom; 15px;
-  `}
 
+// ####### MetaData #######
+
+const MetaData = styled.div<{
+  gridlayout: string;
+  isTop: boolean;
+}>`
+  ${p => (p.gridlayout === 'tiles' ? MetaTilesData : MetaRowsData)}
+  ${p => (p.isTop? null : MetaRowsPhabletFix)}
+
+`;
+
+const MetaRowsPhabletFix = css`
   ${mediaqueries.phablet`
-    max-width: 100%;
-    padding:  0 20px;
-    margin-bottom: 20px;
-    -webkit-line-clamp: 3;
+    position:absolute;
+    bottom: 18px;
   `}
 `;
 
-const MetaData = styled.div`
+
+const MetaRowsData = p => css`
   font-weight: 600;
-  font-size: 16px;
-  color: ${p => p.theme.colors.grey};
-  opacity: 0.33;
+  font-size: 14px;
+  color: ${p.theme.colors.grey};
+
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  line-height: 24px;
+  width: 100%;
+  bottom: 0px;
+  position: relative;
+  border-top: none;
+  overflow: hidden;
+
 
   ${mediaqueries.phablet`
     max-width: 100%;
-    padding:  0 20px 30px;
+    padding:  0px;
   `}
 `;
 
-const DateData = styled.div`
-  display:inline-block;
-  float:right;
+const MetaTilesData = p => css`
+  font-weight: 600;
+  font-size: 12px;
+  color: ${p.theme.colors.grey};
+
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 0px;
+  line-height: 40px;
+  width: calc(100% - 40px);
+  bottom: 0px;
+  position: absolute;
+  border-top: 1px solid ${p.theme.colors.light_grey};
+
+  ${mediaqueries.tablet`
+    position:relative;
+    margin-top: 28px;
+    line-height: 40px;
+  `}
+
+  ${mediaqueries.phablet`
+    max-width: 100%;
+    margin-top: 24px;
+    line-height: 40px;
+  `}
 `;
 
-const TagData = styled.div`
+const DateData = styled.div<{
+  gridlayout: string;
+}>`
+  display:inline-block;
+  float:${p => (p.gridlayout === 'tiles' ? 'right' : 'left')};
+  opacity: 0.33;
+`;
+
+const TagData = styled.div<{
+  gridlayout: string;
+}>`
   display:inline-block;
   float:left;
+  opacity: 0.8;
+  margin-bottom:${p => (p.gridlayout === 'tiles' ? '0px' : '6px')};
 `;
+
+// ####### ArticleLink #######
 
 const ArticleLink = styled(Link)<{
   gridlayout: string;
@@ -489,13 +654,12 @@ const ArticleLink = styled(Link)<{
   left: 0;
   border-radius: 5px;
   z-index: 1;
-  transition: transform 0.33s var(--ease-out-quart);
+  transition: transform 0.3s cubic-bezier(.02, .01, .47, 1);
   -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
 
   &:hover ${ImageContainer}, &:focus ${ImageContainer} {
-    transform: translateY(-1px);
-    box-shadow: 0 50px 80px -20px rgba(0, 0, 0, 0.27),
-      0 30px 50px -30px rgba(0, 0, 0, 0.3);
+    transform: ${p => (p.gridlayout === 'tiles' ? 'translateY(0px)' : 'translateY(0px)')};
+    box-shadow: ${p => (p.gridlayout === 'tiles' ? '0 50px 80px -20px rgba(0, 0, 0, 0),0 30px 50px -30px rgba(0, 0, 0, 0.)' : '0 50px 80px -20px rgba(0, 0, 0, 0.2),0 30px 50px -30px rgba(0, 0, 0, 0.25)')}
   }
 
   &:hover h2,

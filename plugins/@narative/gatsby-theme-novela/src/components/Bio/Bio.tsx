@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'gatsby';
 import styled from '@emotion/styled';
+import mediaqueries from '@styles/media';
 
 import Image from '@components/Image';
 import { IAuthor } from '@types';
@@ -87,4 +88,14 @@ const BioText = styled.p`
     color: ${p => p.theme.colors.grey};
     text-decoration: underline;
   }
+
+  ${mediaqueries.phablet`
+    font-size: 12px;
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+`}
+
 `;

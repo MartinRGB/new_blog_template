@@ -74,7 +74,7 @@ const FooterContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: 80px;
+  padding-bottom: 50px;
   color: ${p => p.theme.colors.grey};
 
   ${mediaqueries.tablet`
@@ -89,7 +89,7 @@ const FooterContainer = styled.div`
 
 const HoritzontalRule = styled.div`
   position: relative;
-  margin: 140px auto 50px;
+  margin: 50px auto 50px;
   border-bottom: 1px solid ${p => p.theme.colors.horizontalRule};
 
   ${mediaqueries.tablet`
@@ -107,7 +107,7 @@ const FooterText = styled.div`
   `}
 
   ${mediaqueries.phablet`
-    margin: 120px auto 100px;
+    margin: 20px auto 20px;
   `}
 `;
 
@@ -117,7 +117,7 @@ const FooterGradient = styled.div`
   left: 0;
   width: 100%;
   height: 590px;
-  z-index: 0;
+  z-index: -1;
   pointer-events: none;
   background: ${p => p.theme.colors.gradient};
   transition: ${p => p.theme.colorModeTransition};
