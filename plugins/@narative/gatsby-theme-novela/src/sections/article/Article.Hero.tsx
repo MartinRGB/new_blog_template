@@ -33,7 +33,7 @@ const ArticleHero: React.FC<ArticleHeroProps> = ({ article, authors }) => {
         </HeroSubtitle>
       </Header>
 
-      <HeroImage id="ArticleImage__Hero">
+      <HeroImage id="ArticleImage__Hero" hasHeroImage={hasHeroImage}>
             {hasHeroImage ?(<Image src={article.hero.full} />):(<div></div>)}
       </HeroImage>
         
@@ -100,8 +100,9 @@ const Header = styled.header`
   `}
 
   ${mediaqueries.phablet`
-    margin: 40px auto 60px;
-    padding: 0 40px;
+    margin: 0px 0px 25px;
+    padding: 0 4rem;
+    width: 486px;
   `}
 
   @media screen and (max-height: 700px) {
@@ -122,6 +123,7 @@ const HeroHeading = styled(Headings.h1)`
   `}
 
   ${mediaqueries.phablet`
+    margin-top: 20px;
     font-size: 32px;
   `}
 `;
@@ -160,8 +162,10 @@ const HeroSubtitle = styled.div<{ hasCoAUthors: boolean }>`
   `}
 `;
 
-const HeroImage = styled.div`
-  display: block;
+const HeroImage = styled.div<{
+  hasHeroImage:boolean;
+}>`
+  display: ${p => (p.hasHeroImage?'block':'none')};
   position: relative;
   z-index: 1;
   border-radius: 12px;

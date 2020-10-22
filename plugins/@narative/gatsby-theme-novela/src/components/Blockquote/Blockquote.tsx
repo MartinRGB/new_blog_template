@@ -7,15 +7,21 @@ const Blockquote = styled.blockquote`
   color: ${p => p.theme.colors.articleText};
   font-family: ${p => p.theme.fonts.serif};
   font-style: italic;
+  width: 744px;
+
+  ${mediaqueries.desktop`
+    width: 507px;
+  `};
 
   ${mediaqueries.tablet`
     margin: 10px auto 35px;
+    width: 486px;
   `};
 
   & > p {
     font-family: ${p => p.theme.fonts.serif};
     max-width: 880px !important;
-    padding-right: 100px;
+    // padding-right: 100px;
     padding-bottom: 0;
     width: 100%;
     margin: 0 auto;
@@ -23,14 +29,17 @@ const Blockquote = styled.blockquote`
     line-height: 1.32;
     font-weight: bold;
 
+
+
     ${mediaqueries.tablet`
       font-size: 26px;
-      padding: 0 180px;
     `};
 
     ${mediaqueries.phablet`
-      font-size: 36px;
-      padding: 0 20px 0 40px;
+      font-size: 26px;
+      //padding: 0 20px 0 20px;
+      padding: 0 28px 0 28px;
+      margin-left: -7px;
     `};
   }
 `;

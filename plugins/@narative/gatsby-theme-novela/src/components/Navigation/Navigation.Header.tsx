@@ -109,6 +109,8 @@ const NavigationHeader: React.FC<{}> = () => {
       if(scrollY > containerH - logoH - 16 - 16){
         setShouldFixHeader(true)
         setHeaderOffset(containerH - logoH - 16 - 16)
+        // TODO SetClamp
+        console.log(scrollY)
       }else{
         setShouldFixHeader(false)
         setHeaderOffset(0)
@@ -217,7 +219,7 @@ const BlurContainer = styled.div<{
 }>`
   width:100%;
   -webkit-backdrop-filter: saturate(180%) blur(1em);
-  backdrop-filter: saturate(180%) blur(1em);
+  backdrop-filter: ${p => (p.shouldFixHeader ? "saturate(180%) blur(1em)" : "")};
   padding-bottom:16px;
   z-index: 11;
   border-bottom: ${p => (p.shouldFixHeader ? "0.5px solid #80808017" : "")};
@@ -229,8 +231,13 @@ const BlurContainer = styled.div<{
   `};
 
   ${mediaqueries.phablet`
-    padding-bottom:40px;
+    padding-bottom:16px;
+
+    & > section{
+      padding: 0 4rem;
+    }
   `}
+
 
   @media screen and (max-height: 800px) {
     

@@ -160,7 +160,7 @@ const ArticleBodyHero = styled.article`
   `}
 
   ${mediaqueries.phablet`
-    padding: 63px 0;
+    padding: 63px 15px 0 15px;
   `}
 `;
 
@@ -179,7 +179,7 @@ const ArticleBody = styled.article`
   `}
 
   ${mediaqueries.phablet`
-    padding: 0px 0;
+    padding: 0px 20px;
   `}
 `;
 
@@ -190,12 +190,17 @@ const NextArticle = styled(Section)`
 const FooterNext = styled.h3`
   position: relative;
   opacity: 0.25;
-  margin-bottom: 100px;
+  margin-bottom: 60px;
+  margin-top: 60px;
   font-weight: 400;
   color: ${p => p.theme.colors.primary};
 
   ${mediaqueries.tablet`
     margin-bottom: 60px;
+  `}
+
+  ${mediaqueries.phablet`
+    padding: 0 15px;
   `}
 
   &::after {
@@ -204,20 +209,33 @@ const FooterNext = styled.h3`
     background: ${p => p.theme.colors.grey};
     width: ${(910 / 1140) * 100}%;
     height: 1px;
-    right: 0;
+    right:0;
     top: 11px;
 
+
+    ${mediaqueries.desktop`
+
+      width:calc(100% - 250px);
+    `}
+
     ${mediaqueries.tablet`
-      width: ${(600 / 1140) * 100}%;
     `}
 
     ${mediaqueries.phablet`
-      width: ${(400 / 1140) * 100}%;
+      right: 15px;
     `}
 
-    ${mediaqueries.phone`
-      width: 90px
-    `}
+    // ${mediaqueries.tablet`
+    //   width: ${(600 / 1140) * 100}%;
+    // `}
+
+    // ${mediaqueries.phablet`
+    //   width: ${(400 / 1140) * 100}%;
+    // `}
+
+    // ${mediaqueries.phone`
+    //   width: 90px
+    // `}
   }
 `;
 

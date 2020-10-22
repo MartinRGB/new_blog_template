@@ -79,7 +79,7 @@ const FooterContainer = styled.div`
 
   ${mediaqueries.tablet`
     flex-direction: column;
-    padding-bottom: 100px;
+    padding-bottom: 60px;
   `}
 
   ${mediaqueries.phablet`
@@ -103,7 +103,7 @@ const HoritzontalRule = styled.div`
 
 const FooterText = styled.div`
   ${mediaqueries.tablet`
-    margin-bottom: 80px;
+    margin-bottom: 20px;
   `}
 
   ${mediaqueries.phablet`

@@ -136,6 +136,10 @@ const Grid = styled.div<{ numberOfArticles: number }>`
   ${mediaqueries.tablet`
     grid-template-columns: 1fr;
   `}
+
+  ${mediaqueries.phablet`
+    padding:0 15px;
+  `}
 `;
 
 const ImageContainer = styled.div`
@@ -166,6 +170,7 @@ const ImageContainer = styled.div`
     overflow: hidden;
     border-top-right-radius: 5px;
     border-top-left-radius: 5px;
+    border-radius:0px;
   `}
 `;
 
@@ -174,8 +179,8 @@ const Item = styled.div`
 
   @media (max-width: 540px) {
     box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.2);
-    border-bottom-right-radius: 5px;
-    border-bottom-left-radius: 5px;
+    border-radius: 12px;
+    overflow: hidden;
     background: ${p => p.theme.colors.card};
   }
 `;
@@ -191,6 +196,14 @@ const ItemWithoutHero = styled.div`
     border-bottom-left-radius: 5px;
     background: ${p => p.theme.colors.card};
   }
+
+  ${mediaqueries.tablet`
+  top:0px;
+  `}
+
+  ${mediaqueries.phablet`
+    top:0px;
+  `}
 `;
 
 
@@ -259,6 +272,12 @@ const ArticleLink = styled(Link)<{ narrow: string }>`
   z-index: 1;
   transition: transform 0.33s var(--ease-out-quart);
   -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+  margin-right:40px;
+
+  &:last-child{
+    margin-left:40px;
+    margin-right:0px;
+  }
 
   &:hover ${ImageContainer} {
     transform: translateY(-1px);
@@ -283,6 +302,11 @@ const ArticleLink = styled(Link)<{ narrow: string }>`
   }
 
   ${p => p.narrow === "true" && mediaqueries.tablet`display: none;`}
+
+  ${mediaqueries.tablet`
+    margin-left:0px;
+    margin-right:0px;
+  `}
 
   ${mediaqueries.phablet`
     &:hover ${ImageContainer} {

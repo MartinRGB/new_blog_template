@@ -184,28 +184,28 @@ const PrismCSS = p => css`
       color: #5fa8aa !important;
     }
 
-    ${mediaqueries.desktop`
-      left: -26px;
-    `};
-
     ${mediaqueries.tablet`
       max-width: 526px;
       padding: 20px 20px;
       left: 0;
     `};
 
+    ${mediaqueries.desktop`
+      max-width: 507px;
+      position: initial !important;
+    `};
+
+    ${mediaqueries.tablet`
+      max-width: 486px;
+      position: initial !important;
+    `};
+
+
     ${mediaqueries.phablet`
       text-size-adjust: none;
-      border-radius: 0;
-      margin: 0 auto 25px;
-      padding: 25px 20px;
-      overflow: initial;
-      width: unset;
-      max-width: unset;
-      float: left;
-      min-width: 100%;
-      overflow: initial;
-      position: relative;
+      margin: 16px auto;
+      width: 430px;
+      overflow: scroll;
     `};
   }
 `;
