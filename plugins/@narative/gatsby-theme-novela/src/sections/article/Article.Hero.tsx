@@ -84,11 +84,11 @@ const Header = styled.header`
   z-index: 10;
   margin:60px auto 120px;
   margin-bottom: 60px;
-  padding-left: 68px;
-  max-width: 749px;
+  //padding-left: 68px;
+  max-width: 680px;
 
   ${mediaqueries.desktop`
-    padding-left: 53px;
+    //padding-left: 53px;
     max-width: calc(507px + 53px);
     margin: 40px auto 60px;
   `}
@@ -170,19 +170,19 @@ const HeroImage = styled.div<{
   z-index: 1;
   border-radius: 12px;
   width: 100%;
-  max-width: 680px;
+  max-width: 944px;
   overflow: hidden;
   margin: 0 auto;
-  margin-left: calc(50% - 340px + 35px);
+  // margin-left: calc(50% - 340px + 35px);
   box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.2),
     0 18px 36px -18px rgba(0, 0, 0, 0.22);
 
   ${mediaqueries.desktop`
-    max-width: 507px;
+    max-width: 680px;
     //border-radius: 0px;
-    margin-left:0px;
+    // margin-left:0px;
     //box-shadow: none;
-    margin-left: calc(50% - 253.5px + 26px);
+    // margin-left: calc(50% - 253.5px + 26px);
   `}
 
 

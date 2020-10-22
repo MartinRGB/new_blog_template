@@ -192,12 +192,10 @@ const PrismCSS = p => css`
 
     ${mediaqueries.desktop`
       max-width: 507px;
-      position: initial !important;
     `};
 
     ${mediaqueries.tablet`
       max-width: 486px;
-      position: initial !important;
     `};
 
 

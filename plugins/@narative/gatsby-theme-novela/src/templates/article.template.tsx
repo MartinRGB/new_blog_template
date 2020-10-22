@@ -147,11 +147,11 @@ const MobileControls = styled.div`
 const ArticleBodyHero = styled.article`
   position: relative;
   padding: 100px 0 35px;
-  padding-left: 68px;
+  padding-left: 0px;
   transition: background 0.2s linear;
 
   ${mediaqueries.desktop`
-    padding-left: 53px;
+    padding-left: 0px;
     padding-top: 76px;
   `}
   
@@ -167,11 +167,11 @@ const ArticleBodyHero = styled.article`
 const ArticleBody = styled.article`
   position: relative;
   padding: 0px 0 35px;
-  padding-left: 68px;
+  padding-left: 0px;
   transition: background 0.2s linear;
 
   ${mediaqueries.desktop`
-    padding-left: 53px;
+    padding-left: 0px;
   `}
   
   ${mediaqueries.tablet`
