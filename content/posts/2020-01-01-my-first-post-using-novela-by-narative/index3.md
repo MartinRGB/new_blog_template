@@ -1,8 +1,8 @@
 ---
-title: My first post using Novela by Narative3
+title: PS5为什么会实现不了RDNA2的全部特性？
 author: MartinRGB
 date: 2019-04-30
-tag: d3
+tag: d3 d4 Tag3 Tag3 Tag
 hero: ./images/1.png
 ---
 

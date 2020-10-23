@@ -59,7 +59,6 @@ const ArticlesList: React.FC<ArticlesListProps> = ({
     //   result.push(array.slice(index, index + 2));
     // }
     result.push(array[index])
-    console.log(result);
     return result;
   }, []);
 
@@ -130,7 +129,6 @@ const ListItem: React.FC<ArticlesListItemProps> = ({ article, narrow }) => {
   if(article.tag != null || article.tag != undefined){
     tagArray = article.tag.toString().split(" ")
     for(var i=0;i<tagArray.length;i++){
-      console.log(tagArray[i]);
       tagString += '#' + tagArray[i].toString() + ' ';
     }
   }
@@ -359,6 +357,7 @@ const listTiles = p => css`
     margin-left:${p.listIndex%3 === 0 ? '0px' : (p.listIndex%3 === 1 ? '20px':'20px' )};
     margin-right:${p.listIndex%3 === 0 ? '20px' : (p.listIndex%3 === 1 ? '20px':'0px' )};
     flex: 1 0 calc(33% - 27px);
+    max-width: calc(33% - 27px);
 
     &:hover,&:focus{
       box-shadow: 0 40px 40px rgba(0,0,0,.16);
@@ -371,6 +370,7 @@ const listTiles = p => css`
       flex: 1 0 calc(50% - 20px);
       margin-left:${p.listIndex%2 === 0 ? '0px' : '20px'};
       margin-right:${p.listIndex%2 === 0 ? '20px' : '0px'};
+      max-width: calc(50% - 20px);
 
       // &:hover,&:focus{
       //   box-shadow: none;
@@ -381,6 +381,7 @@ const listTiles = p => css`
     ${mediaqueries.tablet`
       width:487px;
       flex: 1 0 100%;
+      max-width: 100%;
       margin-left:0;
       margin-right:0;
       height:100%;
@@ -629,9 +630,12 @@ const limitToFourLines = css`
 const Title = styled(Headings.h2)`
   font-size: 21px;
   font-family: ${p => p.theme.fonts.serif};
-  margin-bottom: ${p =>
-    p.hasOverflow && p.gridLayout === 'tiles' ? '35px' : '10px'};
+  margin-bottom: ${p => p.hasOverflow && p.gridLayout === 'tiles' ? '35px' : '10px'};
   transition: color 0.3s cubic-bezier(.02, .01, .47, 1);
+  padding-bottom:${p => (p.gridLayout === 'tiles'? '10px':'0px')};
+  border-bottom: ${p => (p.gridLayout === 'tiles'? '1px solid':'')};
+  border-color: ${p => p.theme.colors.light_grey};
+  word-break: break-all;
   ${limitToTwoLines};
 
   ${mediaqueries.desktop`
@@ -640,6 +644,8 @@ const Title = styled(Headings.h2)`
 
   ${mediaqueries.tablet`
     font-size: 24px;  
+    border-bottom:none;
+    padding-bottom:0px;
   `}
 
   ${mediaqueries.phablet`
@@ -647,6 +653,8 @@ const Title = styled(Headings.h2)`
     // padding: 30px 20px 0;
     margin-bottom: 10px;
     -webkit-line-clamp: 3;
+    border-bottom:none;
+    padding-bottom:0px;
   `}
 `;
 
@@ -743,6 +751,9 @@ const DateData = styled.div<{
   display:inline-block;
   float:${p => (p.gridlayout === 'tiles' ? 'right' : 'left')};
   opacity: 0.33;
+  font-size:11px;
+  transform:scale(0.9);
+  transform-origin:${p => (p.gridlayout === 'tiles' ? 'center right' : 'center left')};
 `;
 
 const TagData = styled.div<{
@@ -751,7 +762,10 @@ const TagData = styled.div<{
   display:inline-block;
   float:left;
   opacity: 0.8;
-  margin-bottom:${p => (p.gridlayout === 'tiles' ? '0px' : '6px')};
+  font-size:11px;
+  margin-bottom:${p => (p.gridlayout === 'tiles' ? '0px' : '8px')};
+  transform:scale(0.9);
+  position:${p => (p.gridlayout === 'tiles' ? 'absolute' : '')};
 `;
 
 // ####### ArticleLink #######

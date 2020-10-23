@@ -6,6 +6,8 @@ date: 2019-04-30
 hero: ./images/2.jpeg
 ---
 
+微积分之后，现代数学有哪些新的革命性工具？近年来物理理论没有突破，是不是微积分不够用了？ —— 这个会导致进不去，非常奇怪了
+
 My first post using `@narative/gatsby-theme-novela`. Novela is built by the team at [Narative](https://narative.co), and built for everyone that loves the web.
 
 ## Headers

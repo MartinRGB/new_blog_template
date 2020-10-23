@@ -1,7 +1,7 @@
 ---
-title: My first post using Novela by Narative4
+title: 离世10年，这位成人动画大师还在被“抄”
 author: MartinRGB
-tag: d4
+tag: d3
 date: 2019-04-30
 ---
 14.\[译\]iOS UIScrollView 动画的力学原理

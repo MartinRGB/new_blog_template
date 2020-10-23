@@ -110,7 +110,7 @@ const NavigationHeader: React.FC<{}> = () => {
         setShouldFixHeader(true)
         setHeaderOffset(containerH - logoH - 16 - 16)
         // TODO SetClamp
-        console.log(scrollY)
+        console.log('TODO SetClamp')
       }else{
         setShouldFixHeader(false)
         setHeaderOffset(0)

@@ -1,5 +1,5 @@
 ---
-title: My first post using Novela by Narative9
+title: 为什么没有普及128位操纵系统的计算机?
 author: MartinRGB
 tag: d9
 date: 2019-04-30
