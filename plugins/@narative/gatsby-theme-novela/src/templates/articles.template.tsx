@@ -100,7 +100,7 @@ const ArticlesPage: Template = ({ location, pageContext }) => {
       <SEO pathname={location.pathname} />
       <ArticlesHero authors={authors} />
       <Section narrow>
-        {/* <TagInfo>全部文章:{tagInfo.getTotalCounts()} {tagInfo.getTagInfo()}</TagInfo> */}
+        <TagInfo>全部文章:{tagInfo.getTotalCounts()} {tagInfo.getTagInfo()}</TagInfo>
         <ArticlesList articles={articles} />
         <ArticlesPaginator show={pageContext.pageCount > 1}>
           <Paginator {...pageContext} />
