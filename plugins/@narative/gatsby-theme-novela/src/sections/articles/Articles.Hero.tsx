@@ -35,6 +35,8 @@ const ArticlesHero: React.FC<IAuthor> = ({ authors }) => {
   const results = useStaticQuery(authorQuery);
   const hero = results.site.edges[0].node.siteMetadata.hero;
   const tilesIsActive = hasSetGridLayout && gridLayout === 'tiles';
+  const rowsIsActive = hasSetGridLayout && gridLayout === 'rows';
+  const simplestIsActive = hasSetGridLayout && gridLayout === 'simplest';
   const featuredAuthor = authors.find(author => author.featured);
 
   if (!featuredAuthor) {
@@ -63,12 +65,21 @@ const ArticlesHero: React.FC<IAuthor> = ({ authors }) => {
           </GridButton>
           <GridButton
             onClick={() => setGridLayout('rows')}
-            active={!tilesIsActive}
+            active={rowsIsActive}
             data-a11y="false"
             title="Show articles in Row grid"
             aria-label="Show articles in Row grid"
           >
             <Icons.Rows />
+          </GridButton>
+          <GridButton
+            onClick={() => setGridLayout('simplest')}
+            active={simplestIsActive}
+            data-a11y="false"
+            title="Show articles in Simplest grid"
+            aria-label="Show articles in Simplest grid"
+          >
+            <Icons.Simplest/>
           </GridButton>
         </GridControlsContainer>
       </SubheadingContainer>

@@ -1,6 +1,6 @@
 ---
 title: My first post using Novela by Narative3
-author: Dennis Brotzky
+author: MartinRGB
 date: 2019-04-30
 tag: d3
 hero: ./images/1.png

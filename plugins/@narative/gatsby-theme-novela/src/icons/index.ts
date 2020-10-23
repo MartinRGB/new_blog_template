@@ -29,6 +29,7 @@ import Link from './ui/Link.Icon';
 import ToggleOpen from './ui/ToggleOpen.Icon';
 import ToggleClose from './ui/ToggleClose.Icon';
 import Rows from './ui/Rows.Icon';
+import Simplest from './ui/Simplest.Icon';
 import Tiles from './ui/Tiles.Icon';
 
 export default {
@@ -62,4 +63,5 @@ export default {
   ToggleOpen,
   Rows,
   Tiles,
+  Simplest,
 };

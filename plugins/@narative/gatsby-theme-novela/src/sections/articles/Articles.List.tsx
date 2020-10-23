@@ -125,18 +125,90 @@ const ListItem: React.FC<ArticlesListItemProps> = ({ article, narrow }) => {
     Object.keys(imageSource).length !== 0 &&
     imageSource.constructor === Object;
 
-  console.log(article.tag);
-
+  var tagArray;
+  var tagString = ''
+  if(article.tag != null || article.tag != undefined){
+    tagArray = article.tag.toString().split(" ")
+    for(var i=0;i<tagArray.length;i++){
+      console.log(tagArray[i]);
+      tagString += '#' + tagArray[i].toString() + ' ';
+    }
+  }
 
   return (
     <ArticleLink to={article.slug} gridlayout={gridLayout} data-a11y="false">
-      <Item gridlayout={gridLayout} hasheroimage={hasHeroImage}>
+      
+        
+        {gridLayout === 'simplest'?
+          (<Item gridlayout={gridLayout} hasheroimage={hasHeroImage}>
 
-        <TopContainer gridlayout={gridLayout}>
+              <TopContainer gridlayout={gridLayout}>
+                <MetaData gridlayout={gridLayout} isTop={true}>
+                  <TagData gridlayout={gridLayout}>{tagString}</TagData>
+                </MetaData>
+                <Title dark hasOverflow={hasOverflow} gridLayout={gridLayout}>
+                  {article.title}
+                </Title>
+              </TopContainer>
+              <MetaData gridlayout={gridLayout} isTop={true}>
+                  <DateData gridlayout={gridLayout}>{article.date} · {article.timeToRead} min read</DateData>
+              </MetaData>
+          </Item>)
+          :
+          ( 
+            <Item gridlayout={gridLayout} hasheroimage={hasHeroImage}>
+              <TopContainer gridlayout={gridLayout}>
+                {gridLayout === 'tiles' ? 
+                  <div></div>: 
+                  <MetaData gridlayout={gridLayout} isTop={true}>
+                    <TagData gridlayout={gridLayout}>{tagString}</TagData>
+                  </MetaData>
+                }
+                <Title dark hasOverflow={hasOverflow} gridLayout={gridLayout}>
+                  {article.title}
+                </Title>
+                <Excerpt
+                  narrow={narrow}
+                  hasOverflow={hasOverflow}
+                  gridLayout={gridLayout}
+                  hasheroimage={hasHeroImage}
+                >
+                  {article.excerpt}
+                </Excerpt>
+                {gridLayout === 'tiles' ? 
+                  <div></div>: 
+                  <MetaData gridlayout={gridLayout} isTop={false}>
+                    <DateData gridlayout={gridLayout}>{article.date} · {article.timeToRead} min read</DateData>
+                  </MetaData>
+                }
+              </TopContainer>
+
+              {hasHeroImage ? 
+                <ImageContainer narrow={narrow} gridlayout={gridLayout}>
+                  <Image src={imageSource} />
+                </ImageContainer> : 
+              <div></div>
+              }
+
+              {gridLayout === 'tiles' ? 
+                  <MetaData gridlayout={gridLayout} isTop={true}>
+                      <TagData gridlayout={gridLayout}>{tagString}</TagData>
+                      <DateData gridlayout={gridLayout}>{article.date} · {article.timeToRead} min read</DateData>
+                  </MetaData> : <div></div>
+              }
+            </Item>
+            )
+            
+            
+        }
+        
+        
+
+        {/* <TopContainer gridlayout={gridLayout}>
           {gridLayout === 'tiles' ? 
              <div></div>: 
             <MetaData gridlayout={gridLayout} isTop={true}>
-             <TagData gridlayout={gridLayout}># {article.tag}</TagData>
+             <TagData gridlayout={gridLayout}>{tagString}</TagData>
             </MetaData>
           }
           <Title dark hasOverflow={hasOverflow} gridLayout={gridLayout}>
@@ -166,14 +238,12 @@ const ListItem: React.FC<ArticlesListItemProps> = ({ article, narrow }) => {
 
         {gridLayout === 'tiles' ? 
             <MetaData gridlayout={gridLayout} isTop={true}>
-                 <TagData gridlayout={gridLayout}># {article.tag}</TagData>
+                 <TagData gridlayout={gridLayout}>{tagString}</TagData>
                  <DateData gridlayout={gridLayout}>{article.date} · {article.timeToRead} min read</DateData>
             </MetaData> : 
-        <div></div>}
+        <div></div>} */}
 
  
-
-      </Item>
     </ArticleLink>
   );
 };
@@ -189,8 +259,33 @@ const ArticlesListContainer = styled.div<{
 }>`
   transition: opacity 0.3s cubic-bezier(.02, .01, .47, 1);
   ${p => p.alwaysShowAllDetails && showDetails}
-  ${p => (p.gridlayout === 'tiles' ? flexUlCSS : null)}
+  ${p => (p.gridlayout === 'simplest'? simplestContainerCSS : (p.gridlayout === 'tiles' ? tilesContainerCSS : null))}
+  z-index: 1;
+  position: relative;
 `;
+
+const simplestContainerCSS = p => css`
+  background: linear-gradient(
+    180deg,
+    ${p.theme.colors.card} 0%,
+    rgba(249, 250, 252, 0) 91.01%
+  );
+  border-radius: 8px;
+  padding: 88px 98px;
+  position: relative;
+  z-index: 1;
+  box-shadow:0px -20px 36px -28px rgb(0 0 0 / 0.12);
+
+  ${mediaqueries.desktop_medium`
+    padding: 80px;
+  `}
+
+  ${mediaqueries.phablet`
+    padding: 30px;
+    margin: 0 1.5rem;
+  `}
+`;
+
 
 const showDetails = css`
   p {
@@ -204,7 +299,7 @@ const showDetails = css`
 
 
 
-const flexUlCSS = css`
+const tilesContainerCSS = css`
     display: flex;
     align-content: flex-start;
     align-items: flex-start;
@@ -226,11 +321,25 @@ const List = styled.div<{
   listIndex: number;
 }>`
   // ${p => (p.gridlayout === 'tiles' ? listTile : listRow)}
-  ${p => (p.gridlayout === 'tiles' ? flexListCSS : listRow)}
+  ${p => (p.gridlayout === 'simplest'? listSimplest: (p.gridlayout === 'tiles' ? listTiles : listRow))}
+`;
+
+const listSimplest = p => css`
+  display: grid;
+  // grid-template-rows: ${p.hasOnlyOneArticle ? '1fr' : '1fr 1fr'};
+  grid-template-rows: 1fr;
+  margin-bottom:40px;
+
+  ${mediaqueries.phablet`
+    margin: 1em;
+    //margin-bottom: 40px;
+    margin-top: 0px;
+  `}
+
 `;
 
 
-const flexListCSS = p => css`
+const listTiles = p => css`
     display: inline-block;
     position: relative;
     background-color: ${p.theme.colors.card};;
@@ -340,7 +449,7 @@ const listRow = p => css`
 // ####### listItem #######
 
 const Item = styled.div<{ gridlayout: string;hasheroimage:boolean; }>`
-  ${p => (p.gridlayout === 'rows' ? listItemRow : listItemTile)}
+  ${p => (p.gridlayout ==='simplest'? listItemSimplest:(p.gridlayout === 'rows' ? listItemRow : listItemTile))}
   height: 100%;
   
   ${mediaqueries.tablet`
@@ -352,6 +461,10 @@ const Item = styled.div<{ gridlayout: string;hasheroimage:boolean; }>`
     overflow:hidden;
     //background: white;
   `}
+`;
+
+const listItemSimplest = p => css`
+    margin-bottom:20px;
 `;
 
 const listItemRow = p => css`

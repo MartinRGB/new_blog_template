@@ -39,7 +39,7 @@ const ArticlesGradient = styled.div`
   left: 0;
   width: 100%;
   height: 590px;
-  z-index: -1;
+  z-index: 0;
   pointer-events: none;
   background: ${p => p.theme.colors.gradient};
   transition: ${p => p.theme.colorModeTransition};

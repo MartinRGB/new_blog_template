@@ -1,6 +1,6 @@
 ---
 title: My first post using Novela by Narative8
-author: Dennis Brotzky
+author: MartinRGB
 tag: d8
 date: 2019-04-30
 ---

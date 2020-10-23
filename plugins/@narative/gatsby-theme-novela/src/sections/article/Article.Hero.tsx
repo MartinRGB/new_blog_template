@@ -178,7 +178,7 @@ const HeroImage = styled.div<{
     0 18px 36px -18px rgba(0, 0, 0, 0.22);
 
   ${mediaqueries.desktop`
-    max-width: 680px;
+    //max-width: 680px;
     //border-radius: 0px;
     // margin-left:0px;
     //box-shadow: none;

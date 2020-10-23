@@ -1,10 +1,9 @@
 ---
-title: My first post using Novela by Narative2
+title: My first post using Novela by Narative10
 author: MartinRGB
-date: 2019-04-30
-tag: Tag2 Tag4 Tag0
-excerpt: With the growing community interest in Gatsby, we hope to create more resources that make it easier for anyone to grasp the power of this incredible tool.
-hero: ./images/5.jpeg
+tag: d14
+date: 2019-05-30
+hero: ./images/article-image-2.jpg
 ---
 
 My first post using `@narative/gatsby-theme-novela`. Novela is built by the team at [Narative](https://narative.co), and built for everyone that loves the web.

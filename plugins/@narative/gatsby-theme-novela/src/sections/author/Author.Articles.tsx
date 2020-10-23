@@ -12,9 +12,10 @@ interface AuthorArticlesProps {
 
 const AuthorArticles: React.FC<AuthorArticlesProps> = ({ articles }) => {
   return (
-    <AuthorArticlesContainer>
-      <ArticlesList articles={articles} alwaysShowAllDetails />
-    </AuthorArticlesContainer>
+    // <AuthorArticlesContainer>
+    //   <ArticlesList articles={articles} alwaysShowAllDetails />
+    // </AuthorArticlesContainer>
+    <ArticlesList articles={articles} alwaysShowAllDetails />
   );
 };
 

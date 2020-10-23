@@ -1,6 +1,6 @@
 ---
 title: My first post using Novela by Narative5
-author: Dennis Brotzky
+author: MartinRGB
 tag: d5
 date: 2019-04-30
 hero: ./images/2.jpeg

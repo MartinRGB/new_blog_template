@@ -133,9 +133,11 @@ export default CodePrism;
 
 const CopyButton = styled.button`
   position: absolute;
-  right: 22px;
-  top: 24px;
+  right: 6px;
+  top: 6px;
   padding: 8px 12px 7px;
+  transform: scale(0.85);
+  transform-origin: right;
   border-radius: 5px;
   color: #6f7177;
   transition: background 0.3s ease;

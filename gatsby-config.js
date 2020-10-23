@@ -1,33 +1,26 @@
 module.exports = {
   siteMetadata: {
-    title: `Novela by Narative`,
-    name: `Narative`,
-    siteUrl: `https://novela.narative.co`,
+    title: `Martin's Graphic Notes`,
+    name: `Martin's Graphic Notes`,
+    siteUrl: `http://www.martinrgb.com/blog/`,
     description: `This is my description that will be used in the meta tags and important for search results`,
     hero: {
       heading: `Welcome to Novela, the simplest way to start publishing with Gatsby.`,
       maxWidth: 652,
     },
+
     social: [
       {
         name: `twitter`,
-        url: `https://twitter.com/narative`,
+        url: `//twitter.com/qiuyinsen`,
       },
       {
         name: `github`,
-        url: `https://github.com/narative`,
-      },
-      {
-        name: `instagram`,
-        url: `https://instagram.com/narative.co`,
-      },
-      {
-        name: `linkedin`,
-        url: `https://www.linkedin.com/company/narative/`,
+        url: `https://github.com/MartinRGB`,
       },
       {
         name: `dribbble`,
-        url: `https://dribbble.com/narativestudio`,
+        url: `https://dribbble.com/MartinRGB`,
       },
     ],
   },
