@@ -43,8 +43,8 @@ const Hero = styled.div`
 const HeroImage = styled.div`
   position: relative;
   z-index: 1;
-  height: 164px;
-  width: 164px;
+  height: 108px;
+  width: 108px;
   margin-bottom: 35px;
   border-radius: 50%;
   overflow: hidden;
@@ -52,14 +52,14 @@ const HeroImage = styled.div`
   box-shadow: 0px 15.619px 31.2381px rgba(0, 0, 0, 0.15);
 
   ${mediaqueries.tablet`
-    width: 146px;
-    height: 146px;
+    width: 90px;
+    height: 90px;
   `}
 
   ${mediaqueries.phablet`
-    width: 136px;
-    height: 136px;
-    margin-bottom: 25px;
+    width: 90px;
+    height: 90px;
+    margin-bottom: 35px;
   `}
 `;
 
@@ -68,7 +68,7 @@ const RoundedImage = styled(Image)`
 `;
 
 const Heading = styled.h1`
-  font-size: 38px;
+  font-size: 20px;
   font-family: ${p => p.theme.fonts.sansSerif};
   color: ${p => p.theme.colors.primary};
   margin-bottom: 15px;
@@ -85,20 +85,20 @@ const Subheading = styled.p`
   margin: 0 auto;
   max-width: 450px;
   color: ${p => p.theme.colors.grey};
-  font-size: 18px;
+  font-size: 13px;
   font-family: ${p => p.theme.fonts.sansSerif};
   line-height: 1.4;
   text-align: center;
 
   ${mediaqueries.phablet`
-    font-size: 14px;
+    font-size: 13px;
   `}
 `;
 
 const Social = styled.div`
   display: flex;
   align-items: center;
-  margin-top: 35px;
+  margin-top: 12px;
 
   ${mediaqueries.phablet`
     font-size: 14px;

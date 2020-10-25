@@ -102,6 +102,7 @@ const HoritzontalRule = styled.div`
 `;
 
 const FooterText = styled.div`
+  font-size:13px;
   ${mediaqueries.tablet`
     margin-bottom: 20px;
   `}

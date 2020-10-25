@@ -1,4 +1,4 @@
-import React from "react";
+import React,{ useEffect }  from "react";
 import styled from "@emotion/styled";
 import { graphql, useStaticQuery } from "gatsby";
 
@@ -12,6 +12,7 @@ import ArticlesHero from "../sections/articles/Articles.Hero";
 import ArticlesList from "../sections/articles/Articles.List";
 
 import { Template } from "@types";
+import ArticlesTagFilter from "../sections/articles/Articles.TagFilter";
 
 const tagQuery = graphql`
 {
@@ -27,23 +28,26 @@ const tagQuery = graphql`
 }
 `
 
+var selectedTags:string = 'all'
+
 
 class markdownTagInfoHelper {
 
   public totalCounts:number;
   public resultArray:Array<any> = [];
-  constructor() {
-    var mdTagsArray = useStaticQuery(tagQuery).allMarkdownRemark.edges;
-    this.resultArray = this.generateResult(mdTagsArray);
-    this.totalCounts = mdTagsArray.length;
+  constructor(context:Array<any>) {
+    var mdsArray = context;
+    this.totalCounts = context.length;
+    this.resultArray = this.generateResult(mdsArray);
   }
 
-  private generateResult(mdTagsArr:Array<any>){
+  private generateResult(mdsArray:Array<any>){
     var newArr:Array<any> = [];
-    for(var i=0;i<mdTagsArr.length;i++){
+    for(var i=0;i<mdsArray.length;i++){
       // markdown tag inside frontmatter
-      if(mdTagsArr[i].node.frontmatter.tag != null){
-        var currArticleTags = mdTagsArr[i].node.frontmatter.tag.toString().split(" ");
+      console.log( mdsArray[i].tag.toString().split(" "))
+      if(mdsArray[i].frontmatter.tag != null){
+        var currArticleTags = mdsArray[i].frontmatter.tag.toString().split(" ");
         // tag in one markdown file should not be duplicated;
         currArticleTags = Array.from(new Set(currArticleTags));
         // push a key-value object;
@@ -58,9 +62,9 @@ class markdownTagInfoHelper {
       else{
         // push a key-value object without name;
         var obj = {}
-        obj['name'] = "";
+        obj['name'] = "未分类";
         obj['times'] = 1;
-        newArr.push(obj);
+        newArr.splice(0,0,obj);
       }
     }
     var result:Array<any> = [];
@@ -72,36 +76,63 @@ class markdownTagInfoHelper {
       }
       this[obj.name].times += obj.times;
     }, {});
+
+    const allTag = {
+      name:"全部",
+      times:mdsArray.length
+    }
+
+    result.splice(0,0,allTag);
+    
+    result = this.moveIndex(result, 1, result.length-1);
     return result;
   }
 
-  // getter
-  getTagInfo(){
-    var str=[];
-    for(var i=0;i<this.resultArray.length;i++){
-      str.push(this.resultArray[i].name.toString() + ' ' + this.resultArray[i].times.toString()+' ')
-    }
-    //this.resultArray
-    return str;
+  moveIndex(input, from, to) {
+    let numberOfDeletedElm = 1;
+  
+    const elm = input.splice(from, numberOfDeletedElm)[0];
+  
+    numberOfDeletedElm = 0;
+
+    input.splice(to, numberOfDeletedElm, elm);
+    return input;
   }
 
-  getTotalCounts(){
-    return this.totalCounts;
-  }
+  // getter
+  // getTagInfo(){
+  //   var str=[];
+  //   for(var i=0;i<this.resultArray.length;i++){
+  //     str.push(this.resultArray[i].name.toString() + ' ' + this.resultArray[i].times.toString()+' ')
+  //   }
+  //   //this.resultArray
+  //   return str;
+  // }
+
+  // getTotalCounts(){
+  //   return this.totalCounts;
+  // }
 }
 
 const ArticlesPage: Template = ({ location, pageContext }) => {
   const articles = pageContext.group;
   const authors = pageContext.additionalContext.authors;
-  let tagInfo = new markdownTagInfoHelper();
+  console.log(pageContext.mdRemarks)
+  let tagInfo = new markdownTagInfoHelper(pageContext.mdRemarks);
+
+  useEffect(() => {
+  }, []);
+
+  console.log(tagInfo)
 
   return (
     <Layout>
       <SEO pathname={location.pathname} />
       <ArticlesHero authors={authors} />
       <Section narrow>
-        <TagInfo>全部文章:{tagInfo.getTotalCounts()} {tagInfo.getTagInfo()}</TagInfo>
-        <ArticlesList articles={articles} />
+        <ArticlesTagFilter tagInfo={tagInfo}></ArticlesTagFilter>
+        {/* <TagInfo>全部文章:{tagInfo.getTotalCounts()} {tagInfo.getTagInfo()}</TagInfo> */}
+        <ArticlesList articles={articles} sortByTags={selectedTags}/>
         <ArticlesPaginator show={pageContext.pageCount > 1}>
           <Paginator {...pageContext} />
         </ArticlesPaginator>
@@ -117,9 +148,10 @@ const TagInfo = styled.div`
   font-size: 14px;
   line-height: 1.45;
   color: var(--theme-ui-colors-grey,#73737D);
-  height: 100px;
   position: relative;
   display: block;
+  overflow: hidden;
+  margin-bottom: 40px;
 `
 
 const ArticlesGradient = styled.div`

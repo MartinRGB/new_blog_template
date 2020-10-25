@@ -1,7 +1,7 @@
 ---
 title: 为什么没有普及128位操纵系统的计算机?
 author: MartinRGB
-tag: d9
+tag: 知乎
 date: 2019-04-30
 hero: ./images/article-image-1.jpg
 ---

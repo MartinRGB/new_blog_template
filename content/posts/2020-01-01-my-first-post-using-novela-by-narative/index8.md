@@ -1,7 +1,7 @@
 ---
-title: My first post using Novela by Narative8
+title: 离世10年，这位成人动画大师还在被“抄”离世10年，这位成人动画大师还在被“抄”
 author: MartinRGB
-tag: d8
+tag: 知乎
 date: 2019-04-30
 ---
 

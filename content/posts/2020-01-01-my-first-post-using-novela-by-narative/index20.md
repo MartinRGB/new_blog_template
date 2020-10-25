@@ -1,7 +1,7 @@
 ---
 title: My first post using Novela by Narative20
 author: MartinRGB
-tag: d20
+tag: 测试
 date: 2020-10-30
 ---
 

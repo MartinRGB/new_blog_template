@@ -1,7 +1,7 @@
 ---
-title: 离世10年，这位成人动画大师还在被“抄”
+title: How UIScrollView work
 author: MartinRGB
-tag: d3
+tag: 设计 编程
 date: 2019-04-30
 ---
 14.\[译\]iOS UIScrollView 动画的力学原理

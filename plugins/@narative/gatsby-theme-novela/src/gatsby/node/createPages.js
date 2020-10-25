@@ -189,6 +189,7 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
     context: {
       authors,
       basePath,
+      mdRemarks:markdownRemarks,
       skip: pageLength,
       limit: pageLength,
     },

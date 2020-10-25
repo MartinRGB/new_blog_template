@@ -1,7 +1,7 @@
 ---
 title: My first post using Novela by Narative5
 author: MartinRGB
-tag: d5
+tag: 测试
 date: 2019-04-30
 hero: ./images/2.jpeg
 ---

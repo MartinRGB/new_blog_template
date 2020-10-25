@@ -1,4 +1,4 @@
-import React, { useContext, useEffect,useState} from 'react';
+import React, { useContext, useEffect} from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/core';
 import { Link } from 'gatsby';
@@ -28,6 +28,7 @@ import { GridLayoutContext } from './Articles.List.Context';
 interface ArticlesListProps {
   articles: IArticle[];
   alwaysShowAllDetails?: boolean;
+  sortByTags?: string;
 }
 
 interface ArticlesListItemProps {
@@ -39,8 +40,6 @@ const ArticlesList: React.FC<ArticlesListProps> = ({
   articles,
   alwaysShowAllDetails,
 }) => {
-
-  const [contentWidth, setContentWidth] = useState<number>(0);
 
   if (!articles) return null;
 
@@ -77,7 +76,8 @@ const ArticlesList: React.FC<ArticlesListProps> = ({
     >
       {articlePairs.map((el,index) =>{
         const listIndex = index;
-
+        // console.log('233')
+        // console.log(el.tag)
         return (
           <List
             key={index}
@@ -141,14 +141,15 @@ const ListItem: React.FC<ArticlesListItemProps> = ({ article, narrow }) => {
           (<Item gridlayout={gridLayout} hasheroimage={hasHeroImage}>
 
               <TopContainer gridlayout={gridLayout}>
-                <MetaData gridlayout={gridLayout} isTop={true}>
+                <MetaData gridlayout={gridLayout} isTop={true} hasHeroImage={hasHeroImage}>
                   <TagData gridlayout={gridLayout}>{tagString}</TagData>
                 </MetaData>
                 <Title dark hasOverflow={hasOverflow} gridLayout={gridLayout}>
                   {article.title}
                 </Title>
+                <TitleBorder hasOverflow={hasOverflow} gridLayout={gridLayout}></TitleBorder>
               </TopContainer>
-              <MetaData gridlayout={gridLayout} isTop={true}>
+              <MetaData gridlayout={gridLayout} isTop={true} hasHeroImage={hasHeroImage}>
                   <DateData gridlayout={gridLayout}>{article.date} · {article.timeToRead} min read</DateData>
               </MetaData>
           </Item>)
@@ -158,13 +159,14 @@ const ListItem: React.FC<ArticlesListItemProps> = ({ article, narrow }) => {
               <TopContainer gridlayout={gridLayout}>
                 {gridLayout === 'tiles' ? 
                   <div></div>: 
-                  <MetaData gridlayout={gridLayout} isTop={true}>
+                  <MetaData gridlayout={gridLayout} isTop={true} hasHeroImage={hasHeroImage}>
                     <TagData gridlayout={gridLayout}>{tagString}</TagData>
                   </MetaData>
                 }
                 <Title dark hasOverflow={hasOverflow} gridLayout={gridLayout}>
                   {article.title}
                 </Title>
+                <TitleBorder hasOverflow={hasOverflow} gridLayout={gridLayout}></TitleBorder>
                 <Excerpt
                   narrow={narrow}
                   hasOverflow={hasOverflow}
@@ -175,7 +177,7 @@ const ListItem: React.FC<ArticlesListItemProps> = ({ article, narrow }) => {
                 </Excerpt>
                 {gridLayout === 'tiles' ? 
                   <div></div>: 
-                  <MetaData gridlayout={gridLayout} isTop={false}>
+                  <MetaData gridlayout={gridLayout} isTop={false} hasHeroImage={hasHeroImage}>
                     <DateData gridlayout={gridLayout}>{article.date} · {article.timeToRead} min read</DateData>
                   </MetaData>
                 }
@@ -189,7 +191,7 @@ const ListItem: React.FC<ArticlesListItemProps> = ({ article, narrow }) => {
               }
 
               {gridLayout === 'tiles' ? 
-                  <MetaData gridlayout={gridLayout} isTop={true}>
+                  <MetaData gridlayout={gridLayout} isTop={true} hasHeroImage={hasHeroImage}>
                       <TagData gridlayout={gridLayout}>{tagString}</TagData>
                       <DateData gridlayout={gridLayout}>{article.date} · {article.timeToRead} min read</DateData>
                   </MetaData> : <div></div>
@@ -257,9 +259,21 @@ const ArticlesListContainer = styled.div<{
 }>`
   transition: opacity 0.3s cubic-bezier(.02, .01, .47, 1);
   ${p => p.alwaysShowAllDetails && showDetails}
-  ${p => (p.gridlayout === 'simplest'? simplestContainerCSS : (p.gridlayout === 'tiles' ? tilesContainerCSS : null))}
+  ${p => (p.gridlayout === 'simplest'? simplestContainerCSS : (p.gridlayout === 'tiles' ? tilesContainerCSS : rowContainerCSS))}
   z-index: 1;
   position: relative;
+`;
+
+const rowContainerCSS = p => css`
+  margin-top:18px;
+  border-top:1px solid ${p.theme.colors.horizontalRule};
+  padding-top:40px;
+
+  ${mediaqueries.phablet`
+  border-top:none;
+  padding-top:0px;
+  `}
+
 `;
 
 const simplestContainerCSS = p => css`
@@ -272,6 +286,7 @@ const simplestContainerCSS = p => css`
   padding: 88px 98px;
   position: relative;
   z-index: 1;
+  margin-top:20px;
   box-shadow:0px -20px 36px -28px rgb(0 0 0 / 0.12);
 
   ${mediaqueries.desktop_medium`
@@ -554,7 +569,7 @@ const ImageContainer = styled.div<{ narrow: boolean; gridlayout: string }>`
 
 const imageContainerTilesCSS = css`
   border-radius:0px;
-  max-height:235px;
+  max-height:244px;
   box-shadow:0 30px 60px -10px rgba(0, 0, 0, 0),
   0 18px 36px -18px rgba(0, 0, 0, 0);
   padding-left:20px;
@@ -593,7 +608,6 @@ const limitToTweleveLines = css`
 
   ${mediaqueries.phablet`
     -webkit-line-clamp: 12;
-
     margin-bottom:33px;
   `}
 `;
@@ -626,35 +640,68 @@ const limitToFourLines = css`
   `}
 `;
 
+const TitleBorder = styled.div<{
+  hasOverflow: boolean;
+  gridLayout: string;
+}>`
+  position: relative;
+  display: block;
+  width: 100%;
+  border-bottom: 1px solid;
+  // margin-bottom: 10px;
+  // margin-top: 10px;
+
+  margin-top:${p => (p.gridLayout === 'tiles'? '10px':'0px')};
+  margin-bottom: ${p => p.hasOverflow && p.gridLayout === 'tiles' ? '35px' : '10px'};
+  border-bottom: ${p => (p.gridLayout === 'tiles'? '1px solid':'none')};
+  border-color: ${p => p.theme.colors.light_grey};
+
+  ${mediaqueries.desktop`
+    margin-bottom: 10px;
+  `}
+
+  ${mediaqueries.tablet`
+    border-bottom:none;
+    margin-top:0px;
+  `}
+
+  ${mediaqueries.phablet`
+    margin-bottom: 10px;
+    -webkit-line-clamp: 3;
+    border-bottom:none;
+    margin-top:0px;
+  `}
+`
 
 const Title = styled(Headings.h2)`
   font-size: 21px;
   font-family: ${p => p.theme.fonts.serif};
-  margin-bottom: ${p => p.hasOverflow && p.gridLayout === 'tiles' ? '35px' : '10px'};
   transition: color 0.3s cubic-bezier(.02, .01, .47, 1);
-  padding-bottom:${p => (p.gridLayout === 'tiles'? '10px':'0px')};
-  border-bottom: ${p => (p.gridLayout === 'tiles'? '1px solid':'')};
-  border-color: ${p => p.theme.colors.light_grey};
+
+  // margin-bottom: ${p => p.hasOverflow && p.gridLayout === 'tiles' ? '35px' : '10px'};
+  // padding-bottom:${p => (p.gridLayout === 'tiles'? '10px':'0px')};
+  // border-bottom: ${p => (p.gridLayout === 'tiles'? '1px solid':'')};
+  // border-color: ${p => p.theme.colors.light_grey};
   word-break: break-all;
   ${limitToTwoLines};
 
   ${mediaqueries.desktop`
-    margin-bottom: 15px;
+    // margin-bottom: 15px;
   `}
 
   ${mediaqueries.tablet`
     font-size: 24px;  
-    border-bottom:none;
-    padding-bottom:0px;
+    // border-bottom:none;
+    // padding-bottom:0px;
   `}
 
   ${mediaqueries.phablet`
     font-size: 22px;  
     // padding: 30px 20px 0;
-    margin-bottom: 10px;
     -webkit-line-clamp: 3;
-    border-bottom:none;
-    padding-bottom:0px;
+    // margin-bottom: 10px;
+    // border-bottom:none;
+    // padding-bottom:0px;
   `}
 `;
 
@@ -682,8 +729,9 @@ const Excerpt = styled.p<{
 const MetaData = styled.div<{
   gridlayout: string;
   isTop: boolean;
+  hasHeroImage:boolean;
 }>`
-  ${p => (p.gridlayout === 'tiles' ? MetaTilesData : MetaRowsData)}
+  ${p => (p.gridlayout === 'tiles' ? (p.hasHeroImage?MetaTilesDataWithHero:MetaTilesDataWithoutHero) : MetaRowsData)}
   ${p => (p.isTop? null : MetaRowsPhabletFix)}
 
 `;
@@ -718,7 +766,7 @@ const MetaRowsData = p => css`
   `}
 `;
 
-const MetaTilesData = p => css`
+const MetaTilesDataWithHero = p => css`
   font-weight: 600;
   font-size: 12px;
   color: ${p.theme.colors.grey};
@@ -734,15 +782,44 @@ const MetaTilesData = p => css`
 
   ${mediaqueries.tablet`
     position:relative;
-    margin-top: 28px;
+    margin-top: 16px;
     line-height: 40px;
   `}
 
   ${mediaqueries.phablet`
     max-width: 100%;
-    margin-top: 24px;
+    margin-top: 16px;
     line-height: 40px;
   `}
+
+`;
+
+const MetaTilesDataWithoutHero = p => css`
+  font-weight: 600;
+  font-size: 12px;
+  color: ${p.theme.colors.grey};
+
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 0px;
+  line-height: 40px;
+  width: calc(100% - 40px);
+  bottom: 0px;
+  position: absolute;
+  border-top: 1px solid ${p.theme.colors.light_grey};
+
+  ${mediaqueries.tablet`
+    position:relative;
+    margin-top: 16px;
+    line-height: 40px;
+  `}
+
+  ${mediaqueries.phablet`
+    max-width: 100%;
+    margin-top: -16px;
+    line-height: 40px;
+  `}
+
 `;
 
 const DateData = styled.div<{

@@ -50,11 +50,9 @@ const Article: Template = ({ pageContext, location }) => {
   const { article, authors, next} = pageContext;
 
   // List-Data.query.js
-  console.log(article)
-  // Article-createPages.js
-  console.log(pageContext)
-
-  console.log(article.tag)
+  // console.log(article)
+  // console.log(pageContext)
+  // console.log(article.tag)
 
   const hasHeroImage =
   article.hero &&
@@ -207,7 +205,7 @@ const FooterNext = styled.h3`
     content: '';
     position: absolute;
     background: ${p => p.theme.colors.grey};
-    width: ${(910 / 1140) * 100}%;
+    width: calc(100% - 353px);
     height: 1px;
     right:0;
     top: 11px;
@@ -215,7 +213,7 @@ const FooterNext = styled.h3`
 
     ${mediaqueries.desktop`
 
-      width:calc(100% - 250px);
+      width:calc(100% - 353px);
     `}
 
     ${mediaqueries.tablet`

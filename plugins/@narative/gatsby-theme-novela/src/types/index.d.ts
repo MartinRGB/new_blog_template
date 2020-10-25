@@ -25,6 +25,12 @@ interface IGatsbyImageFixed extends IGatsbyImage {
   width: number;
 }
 
+export interface ITagInfo{
+  result:Array<any>;
+  num:number;
+}
+
+
 export interface IAuthor {
   authorsPage?: boolean;
   featured?: boolean;
@@ -43,6 +49,7 @@ export interface IArticle {
   excerpt: string;
   body: string;
   id: string;
+  tag: string[];
   hero: {
     full: IGatsbyImageFluid;
     preview: IGatsbyImageFluid;
