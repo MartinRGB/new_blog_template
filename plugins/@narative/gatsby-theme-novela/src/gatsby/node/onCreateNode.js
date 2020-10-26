@@ -1,7 +1,15 @@
 /* eslint-disable no-prototype-builtins */
 
 const crypto = require(`crypto`);
-const slugify = require('slugify');
+//const slugify = require('slugify');
+
+const slugify = function(str){
+  str = str.replace(/\s+/g,'-') // replace spaces with dashes
+  //str = str.replace(/[^a-zA-Z0-9_\u3400-\u9FBF\s-]/g,'');
+  //str = str.replace(/[\!@#\$%^&\*\)]/g,'');
+  //str = encodeURIComponent(str) // encode (it encodes chinese characters)
+  return str
+}
 
 // Create fields for post slugs and source
 // This will change with schema customization with work
