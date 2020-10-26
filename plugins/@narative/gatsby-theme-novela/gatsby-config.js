@@ -19,6 +19,7 @@ module.exports = ({
     `gatsby-transformer-remark`,
     `gatsby-transformer-yaml`,
     `gatsby-plugin-theme-ui`,
+    `gatsby-plugin-postcss`,
     {
       resolve: `gatsby-plugin-feed`,
       options: {

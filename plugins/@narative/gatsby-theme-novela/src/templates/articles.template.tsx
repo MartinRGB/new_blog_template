@@ -1,5 +1,6 @@
 import React,{ useEffect }  from "react";
 import styled from "@emotion/styled";
+import {css} from "@emotion/core";
 import { graphql, useStaticQuery } from "gatsby";
 
 import Section from "@components/Section";
@@ -11,8 +12,11 @@ import mediaqueries from '@styles/media';
 import ArticlesHero from "../sections/articles/Articles.Hero";
 import ArticlesList from "../sections/articles/Articles.List";
 
+import tw from 'twin.macro'
+
 import { Template } from "@types";
 import ArticlesTagFilter from "../sections/articles/Articles.TagFilter";
+
 
 const tagQuery = graphql`
 {
@@ -27,6 +31,15 @@ const tagQuery = graphql`
   }
 }
 `
+
+// const ContainerParent = tw.div`
+//   bg-blue-500 w-full
+// `
+
+// const Container = styled.div`
+//     ${tw`bg-red-500 w-full`}
+//     padding: 15px;
+// `
 
 var selectedTags:string = 'all'
 
@@ -126,10 +139,15 @@ const ArticlesPage: Template = ({ location, pageContext }) => {
 
   return (
     <Layout>
+    {/* <div css={css`${tw`flex items-center justify-between px-1 py-3`}`}>
+      <h1>Hello, world!</h1>
+      <h2>I'm a flex item too!</h2>
+    </div> */}
+
       <SEO pathname={location.pathname} />
       <ArticlesHero authors={authors} />
       <Section narrow>
-        <ArticlesTagFilter tagInfo={tagInfo}></ArticlesTagFilter>
+        <ArticlesTagFilter  tagInfo={tagInfo}></ArticlesTagFilter>
         {/* <TagInfo>全部文章:{tagInfo.getTotalCounts()} {tagInfo.getTagInfo()}</TagInfo> */}
         <ArticlesList articles={articles} sortByTags={selectedTags}/>
         <ArticlesPaginator show={pageContext.pageCount > 1}>
@@ -167,10 +185,8 @@ const ArticlesGradient = styled.div`
 
 const ArticlesPaginator = styled.div<{ show: boolean }>`
   ${p => p.show && `margin-top: 40px;`}
-
   ${mediaqueries.phablet`
     margin-top:40px;
     padding-left: 1em;
   `}
-
 `;
