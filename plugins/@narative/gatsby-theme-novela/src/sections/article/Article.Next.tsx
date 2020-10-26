@@ -187,8 +187,6 @@ const Item = styled.div`
 
 const ItemWithoutHero = styled.div`
   position: relative;
-  top:140px;
-  transform:translationY(-50%);
 
   @media (max-width: 540px) {
     box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.2);
