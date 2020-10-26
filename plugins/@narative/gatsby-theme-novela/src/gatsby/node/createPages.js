@@ -195,8 +195,6 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
     },
   });
 
-  //console.log('Tags+++++',markdownRemarks);
-
   /**
    * Once the list of articles have bene created, we need to make individual article posts.
    * To do this, we need to find the corresponding authors since we allow for co-authors.
@@ -222,9 +220,6 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
         ${error}
       `);
     }
-
-    // console.log('tagsWithArticle' + index + ' ' + tagsWithArticle[index].tag + ' ' +  article.title);
-    // console.log('tagsWithArticle' + index + ' ' + tagsWithArticle[index].tag + ' ' +  article.title);
 
     /**
      * We need a way to find the next artiles to suggest at the bottom of the articles page.

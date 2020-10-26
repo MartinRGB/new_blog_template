@@ -25,12 +25,6 @@ interface IGatsbyImageFixed extends IGatsbyImage {
   width: number;
 }
 
-export interface ITagInfo{
-  result:Array<any>;
-  num:number;
-}
-
-
 export interface IAuthor {
   authorsPage?: boolean;
   featured?: boolean;

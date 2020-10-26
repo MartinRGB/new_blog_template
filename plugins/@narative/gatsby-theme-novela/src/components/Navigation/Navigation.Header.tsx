@@ -218,13 +218,46 @@ const BlurContainer = styled.div<{
   shouldFixHeader: boolean;
 }>`
   width:100%;
-  -webkit-backdrop-filter: saturate(180%) blur(1em);
-  backdrop-filter: ${p => (p.shouldFixHeader ? "saturate(180%) blur(1em)" : "")};
   padding-bottom:16px;
   z-index: 11;
-  border-bottom: ${p => (p.shouldFixHeader ? "0.5px solid #80808017" : "")};
+  border-bottom: ${p => (p.shouldFixHeader ? "0.5px solid " : "")};
+  border-color:${p => p.theme.colors.light_grey};
   top:${p => (p.shouldFixHeader ? -p.headerOffset +"px" : "0px")};
   position: ${p => (p.shouldFixHeader ? "sticky" : "relative")};
+
+
+
+  &::before{
+    content: '';
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    overflow: hidden;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    -webkit-backdrop-filter: saturate(180%) blur(1em);
+    backdrop-filter: ${p => (p.shouldFixHeader ? "saturate(180%) blur(1em)" : "")};
+    //-webkit-mask: -webkit-gradient(linear, right top, left top, color-stop(70%, black), to(transparent));
+    -webkit-mask: linear-gradient(to bottom,#000000 80%,#00000080 100%);
+    //mask: -webkit-gradient(linear, right top, left top, color-stop(70%, black), to(transparent));
+    mask: linear-gradient(to bottom,#000000 80%,#00000080 100%);
+  }
+
+  &::after{
+    content: '';
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    overflow: hidden;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    background: ${p => (p.shouldFixHeader ? p.theme.colors.nav_gradient:"none")};
+    //background: ;
+  }
 
   ${mediaqueries.desktop_medium`
     

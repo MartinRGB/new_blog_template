@@ -12,6 +12,7 @@ export default {
   accent: "#6166DC",
   hover: "rgba(0, 0, 0, 0.07)",
   gradient: "linear-gradient(180deg, #fafafa 0%, #D9DBE0 100%)",
+  nav_gradient: "linear-gradient(to bottom right, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.35))",
   articleText: "#08080B",
   track: "rgba(8, 8, 11, 0.3)",
   progress: "#000",
@@ -33,6 +34,7 @@ export default {
       hover: "rgba(255, 255, 255, 0.07)",
       gradient:
         "linear-gradient(180deg, #111216 0%, rgba(66, 81, 98, 0.36) 100%)",
+      nav_gradient: "linear-gradient(to bottom right,rgb(0 0 0 / 75%),rgb(0 0 0 / 35%))",
       articleText: "#fff",
       track: "rgba(255, 255, 255, 0.3)",
       progress: "#fff",

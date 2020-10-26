@@ -45,7 +45,7 @@ class markdownTagInfoHelper {
     var newArr:Array<any> = [];
     for(var i=0;i<mdsArray.length;i++){
       // markdown tag inside frontmatter
-      console.log( mdsArray[i].tag.toString().split(" "))
+      // console.log( mdsArray[i].tag.toString().split(" "))
       if(mdsArray[i].frontmatter.tag != null){
         var currArticleTags = mdsArray[i].frontmatter.tag.toString().split(" ");
         // tag in one markdown file should not be duplicated;
@@ -117,13 +117,12 @@ class markdownTagInfoHelper {
 const ArticlesPage: Template = ({ location, pageContext }) => {
   const articles = pageContext.group;
   const authors = pageContext.additionalContext.authors;
-  console.log(pageContext.mdRemarks)
   let tagInfo = new markdownTagInfoHelper(pageContext.mdRemarks);
 
   useEffect(() => {
   }, []);
 
-  console.log(tagInfo)
+  console.log(pageContext)
 
   return (
     <Layout>
