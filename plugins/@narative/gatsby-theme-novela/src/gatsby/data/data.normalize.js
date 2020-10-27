@@ -51,18 +51,17 @@ function normalizeAvatar(author) {
 }
 
 function normalizeTags(markdownRemark) {
-  let tag = {};
+  let tags = "";
 
-  if (markdownRemark.frontmatter.tag) {
-    tag = markdownRemark.frontmatter.tag;
+  if (markdownRemark.frontmatter.tags) {
+    tags = markdownRemark.frontmatter.tags;
   } 
 
-  return tag;
+  return tags;
 }
 
 function normalizeHeadings(markdownRemark) {
   let headings = {
-    name: {},
   };
 
   if (markdownRemark.headings) {
@@ -85,11 +84,15 @@ module.exports.local = {
       avatar: normalizeAvatar(author),
     };
   },
-  markdownRemarks: ({ node: markdownRemark }) => {
+  headings: ({ node: markdownRemark }) => {
     return {
-      ...markdownRemark,
-      tag: normalizeTags(markdownRemark),
       headings:normalizeHeadings(markdownRemark),
+    };
+  },
+
+  tags: ({ node: markdownRemark }) => {
+    return {
+      tags: normalizeTags(markdownRemark)
     };
   },
 };
@@ -120,11 +123,16 @@ module.exports.contentful = {
     };
   },
 
-  markdownRemarks: ({ node: markdownRemark }) => {
+  headings: ({ node: markdownRemark }) => {
     return {
-      ...markdownRemark,
-      tag: normalizeTags(markdownRemark),
       headings:normalizeHeadings(markdownRemark),
     };
   },
+
+  tags: ({ node: markdownRemark }) => {
+    return {
+      tags: normalizeTags(markdownRemark)
+    };
+  },
+
 };

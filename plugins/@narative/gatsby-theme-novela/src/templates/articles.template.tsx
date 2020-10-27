@@ -17,21 +17,6 @@ import tw from 'twin.macro'
 import { Template } from "@types";
 import ArticlesTagFilter from "../sections/articles/Articles.TagFilter";
 
-
-const tagQuery = graphql`
-{
-  allMarkdownRemark(sort: {fields: [frontmatter___date, frontmatter___title], order: DESC}) {
-    edges {
-      node {
-        frontmatter {
-          tag
-        }
-      }
-    }
-  }
-}
-`
-
 // const ContainerParent = tw.div`
 //   bg-blue-500 w-full
 // `
@@ -56,11 +41,12 @@ class markdownTagInfoHelper {
 
   private generateResult(mdsArray:Array<any>){
     var newArr:Array<any> = [];
+
     for(var i=0;i<mdsArray.length;i++){
       // markdown tag inside frontmatter
-      // console.log( mdsArray[i].tag.toString().split(" "))
-      if(mdsArray[i].frontmatter.tag != null){
-        var currArticleTags = mdsArray[i].frontmatter.tag.toString().split(" ");
+      if(mdsArray[i].tags != null && mdsArray[i].tags != undefined && mdsArray[i].tags != ""){
+        //var currArticleTags = mdsArray[i].frontmatter.tags.toString().split(" ");
+        var currArticleTags = mdsArray[i].tags;
         // tag in one markdown file should not be duplicated;
         currArticleTags = Array.from(new Set(currArticleTags));
         // push a key-value object;
@@ -98,6 +84,7 @@ class markdownTagInfoHelper {
     result.splice(0,0,allTag);
     
     result = this.moveIndex(result, 1, result.length-1);
+    //console.log(result)
     return result;
   }
 
@@ -111,31 +98,18 @@ class markdownTagInfoHelper {
     input.splice(to, numberOfDeletedElm, elm);
     return input;
   }
-
-  // getter
-  // getTagInfo(){
-  //   var str=[];
-  //   for(var i=0;i<this.resultArray.length;i++){
-  //     str.push(this.resultArray[i].name.toString() + ' ' + this.resultArray[i].times.toString()+' ')
-  //   }
-  //   //this.resultArray
-  //   return str;
-  // }
-
-  // getTotalCounts(){
-  //   return this.totalCounts;
-  // }
 }
 
 const ArticlesPage: Template = ({ location, pageContext }) => {
   const articles = pageContext.group;
   const authors = pageContext.additionalContext.authors;
-  let tagInfo = new markdownTagInfoHelper(pageContext.mdRemarks);
+
+  console.log(pageContext)
+  let tagInfo = new markdownTagInfoHelper(pageContext.allTags);
 
   useEffect(() => {
   }, []);
 
-  console.log(pageContext)
 
   return (
     <Layout>
@@ -190,3 +164,12 @@ const ArticlesPaginator = styled.div<{ show: boolean }>`
     padding-left: 1em;
   `}
 `;
+
+
+const slugify = function(str){
+  str = str.replace(/\s+/g,'-') // replace spaces with dashes
+  //str = str.replace(/[^a-zA-Z0-9_\u3400-\u9FBF\s-]/g,'');
+  //str = str.replace(/[\!@#\$%^&\*\)]/g,'');
+  //str = encodeURIComponent(str) // encode (it encodes chinese characters)
+  return str
+}

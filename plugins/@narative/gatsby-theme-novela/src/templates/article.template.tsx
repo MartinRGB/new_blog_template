@@ -51,7 +51,7 @@ const Article: Template = ({ pageContext, location }) => {
 
   // List-Data.query.js
   // console.log(article)
-  // console.log(pageContext)
+  console.log(pageContext)
   // console.log(article.tag)
 
   const hasHeroImage =

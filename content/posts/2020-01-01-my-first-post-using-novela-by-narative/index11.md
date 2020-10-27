@@ -1,7 +1,6 @@
 ---
 title: Test
 author: MartinRGB
-tag: 
 date: 2019-04-30
 hero: ./images/article-image-1.jpg
 ---

@@ -126,17 +126,16 @@ const ListItem: React.FC<ArticlesListItemProps> = ({ article, narrow }) => {
 
   var tagArray;
   var tagString = ''
-  if(article.tag != null || article.tag != undefined){
-    tagArray = article.tag.toString().split(" ")
-    for(var i=0;i<tagArray.length;i++){
-      tagString += '#' + tagArray[i].toString() + ' ';
+  if(article.tags != null || article.tags != undefined){
+    //tagArray = article.tags.toString().split(" ")
+    for(var i=0;i<article.tags.length;i++){
+      tagString += '#' + article.tags[i].toString() + ' ';
     }
   }
 
   return (
     <ArticleLink to={article.slug} gridlayout={gridLayout} data-a11y="false">
-      
-        
+  
         {gridLayout === 'simplest'?
           (<Item gridlayout={gridLayout} hasheroimage={hasHeroImage}>
 

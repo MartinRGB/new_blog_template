@@ -21,10 +21,15 @@ const normalize = require('../data/data.normalize');
 // ///////////////// Utility functions ///////////////////
 
 function buildPaginatedPath(index, basePath) {
+  // if (basePath === '/') {
+  //   return index > 1 ? `${basePath}page/${index}` : basePath;
+  // }
+  // return index > 1 ? `${basePath}/page/${index}` : basePath;
   if (basePath === '/') {
-    return index > 1 ? `${basePath}page/${index}` : basePath;
+    return index > 1 ? `${basePath}page/${index}` : `${basePath}page/1`;
   }
-  return index > 1 ? `${basePath}/page/${index}` : basePath;
+  return index > 1 ? `${basePath}/page/${index}` : `${basePath}/page/1`;
+
 }
 
 function slugify(string, base) {
@@ -50,7 +55,9 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
   const {
     rootPath,
     basePath = '/',
+    articlePath = '/articles',
     authorsPath = '/authors',
+    tagPath = '/tag',
     authorsPage = true,
     pageLength = 12,
     sources = {},
@@ -73,11 +80,13 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
 
   let authors;
   let articles;
+  let headings;
+  let tags;
 
   const dataSources = {
-    local: { authors: [], articles: [], markdownRemarks: [], },
-    contentful: { authors: [], articles: [], markdownRemarks: [], },
-    netlify: { authors: [], articles: [], markdownRemarks: [], },
+    local: { authors: [], articles: [], headings: [], tags:[] },
+    contentful: { authors: [], articles: [], headings: [], tags:[] },
+    netlify: { authors: [], articles: [], headings: [], tags:[] },
   };
 
   if (rootPath) {
@@ -94,8 +103,7 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
       log('Querying Authors & Articles source:', 'Local');
       const localAuthors = await graphql(query.local.authors);
       const localArticles = await graphql(query.local.articles);
-      const localMarkDownRemarks = await graphql(query.local.markdownRemarks);
-
+      const localMarkDownRemarks= await graphql(query.local.markdownRemarks);
       dataSources.local.authors = localAuthors.data.authors.edges.map(
         normalize.local.authors,
       );
@@ -104,8 +112,12 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
         normalize.local.articles,
       );
 
-      dataSources.local.markdownRemarks = localMarkDownRemarks.data.markdownRemarks.edges.map(
-        normalize.local.markdownRemarks,
+      dataSources.local.headings = localMarkDownRemarks.data.markdownRemarks.edges.map(
+        normalize.local.headings,
+      );
+
+      dataSources.local.tags = localMarkDownRemarks.data.markdownRemarks.edges.map(
+        normalize.local.tags,
       );
 
     } catch (error) {
@@ -128,9 +140,15 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
         normalize.contentful.articles,
       );
 
-      dataSources.contentful.markdownRemarks = contentfulMarkDownRemarks.data.markdownRemarks.edges.map(
-        normalize.contentful.markdownRemarks,
+
+      dataSources.contentful.headings = contentfulMarkDownRemarks.data.markdownRemarks.edges.map(
+        normalize.contentful.headings,
       );
+
+      dataSources.contentful.tags = contentfulMarkDownRemarks.data.markdownRemarks.edges.map(
+        normalize.contentful.tags,
+      );
+
 
     } catch (error) {
       console.error(error);
@@ -138,11 +156,11 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
   }
 
   // Combining together all the articles from different sources
-  markdownRemarks = [
-    ...dataSources.local.markdownRemarks,
-    ...dataSources.contentful.markdownRemarks,
-    ...dataSources.netlify.markdownRemarks,
-  ];
+  headings = [
+    ...dataSources.local.headings,
+    ...dataSources.contentful.headings,
+    ...dataSources.netlify.headings,
+  ].sort(byDate);
 
   articles = [
     ...dataSources.local.articles,
@@ -150,8 +168,20 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
     ...dataSources.netlify.articles,
   ].sort(byDate);
 
-  const articlesThatArentSecret = articles.filter(article => !article.secret);
+  tags = [
+    ...dataSources.local.tags,
+    ...dataSources.contentful.tags,
+    ...dataSources.netlify.tags,
+  ].sort(byDate);
 
+
+  
+  articles.forEach((article, index) => {
+    log('article' + index.toString(), article);
+    log('tag' + index.toString(), tags[index]);
+  });
+
+  const articlesThatArentSecret = articles.filter(article => !article.secret);
   // Combining together all the authors from different sources
   authors = getUniqueListBy(
     [
@@ -178,18 +208,29 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
    * /articles/page/1
    * ...
    */
+
+  // TODO: grab data from graphQL
+  // TODO: optim basePath
+  const path = slugify('all', tagPath);
+  var newPath = path + basePath;
+  newPath = newPath.substring(0,newPath.length - 1);
+
+  log('path',newPath);
+
   log('Creating', 'articles page');
   createPaginatedPages({
     edges: articlesThatArentSecret,
-    pathPrefix: basePath,
+    pathPrefix: newPath,
     createPage,
     pageLength,
     pageTemplate: templates.articles,
     buildPath: buildPaginatedPath,
     context: {
       authors,
-      basePath,
-      mdRemarks:markdownRemarks,
+      newPath,
+      allTags: tags,
+      allHeadings: headings,
+      articleCounts: articles.length,
       skip: pageLength,
       limit: pageLength,
     },
@@ -239,13 +280,13 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
       context: {
         article,
         authors: authorsThatWroteTheArticle,
-        basePath,
+        articlePath,
         permalink: `${data.site.siteMetadata.siteUrl}${article.slug}/`,
         slug: article.slug,
         id: article.id,
         title: article.title,
-        tag: markdownRemarks[index].tag,
-        headings: markdownRemarks[index].headings,
+        tag: tags[index],
+        heading: headings[index],
         canonicalUrl: article.canonical_url,
         mailchimp,
         next,

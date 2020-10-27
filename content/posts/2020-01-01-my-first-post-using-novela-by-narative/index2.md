@@ -2,7 +2,11 @@
 title: My first post using Novela by Narative2
 author: MartinRGB
 date: 2019-04-30
-tag: 测试
+tags:
+  - Novel
+  - 测试
+  - Design
+  - 谁知道呢
 excerpt: With the growing community interest in Gatsby, we hope to create more resources that make it easier for anyone to grasp the power of this incredible tool.With the growing community interest in Gatsby, we hope to create more resources that make it easier for anyone to grasp the power of this incredible tool.With the growing community interest in Gatsby, we hope to create more resources that make it easier for anyone to grasp the power of this incredible tool.With the growing community interest in Gatsby, we hope to create more resources that make it easier for anyone to grasp the power of this incredible tool.
 hero: ./images/5.jpeg
 ---

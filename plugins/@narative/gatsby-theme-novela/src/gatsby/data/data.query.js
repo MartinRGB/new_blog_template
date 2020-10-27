@@ -30,7 +30,7 @@ module.exports.local = {
           dateForSEO: date
           timeToRead
           excerpt
-          tag
+          tags
           headings
           canonical_url
           subscription
@@ -67,7 +67,7 @@ module.exports.local = {
       edges {
         node {
           frontmatter {
-            tag
+            tags
           }
           headings {
             depth
@@ -126,7 +126,7 @@ module.exports.contentful = {
             }
           }
           excerpt
-          tag
+          tags
           headings
           title
           slug
@@ -162,7 +162,7 @@ module.exports.contentful = {
       edges {
         node {
           frontmatter {
-            tag
+            tags
           }
           headings {
             depth
