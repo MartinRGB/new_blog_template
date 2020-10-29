@@ -20,25 +20,35 @@ const normalize = require('../data/data.normalize');
 
 // ///////////////// Utility functions ///////////////////
 
-function buildPaginatedPath(index, basePath) {
-  // if (basePath === '/') {
-  //   return index > 1 ? `${basePath}page/${index}` : basePath;
-  // }
-  // return index > 1 ? `${basePath}/page/${index}` : basePath;
-  if (basePath === '/') {
-    return index > 1 ? `${basePath}page/${index}` : `${basePath}page/1`;
+function buildPaginatedPath(index, path) {
+  if (path === '/') {
+    return index > 1 ? `${path}page/${index}` : path;
   }
-  return index > 1 ? `${basePath}/page/${index}` : `${basePath}/page/1`;
+  return index > 1 ? `${path}/page/${index}` : path;
+
+  // if (path === '/') {
+  //   return index > 1 ? `${path}pages/${index}` : `${path}pages/1`;
+  // }
+  // return index > 1 ? `${path}/pages/${index}` : `${path}/pages/1`;
+}
+
+function buildPathWithTag(){
 
 }
 
+// TODO
 function slugify(string, base) {
   const slug = string
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036F]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/\s+/g,'-')
     .replace(/(^-|-$)+/g, '');
+
+    // .toLowerCase()
+    // .normalize('NFD')
+    // .replace(/[\u0300-\u036F]/g, '')
+    // .replace(/[^a-z0-9]+/g, '-')
+    // .replace(/(^-|-$)+/g, '');
 
   return `${base}/${slug}`.replace(/\/\/+/g, '/');
 }
@@ -55,13 +65,17 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
   const {
     rootPath,
     basePath = '/',
-    articlePath = '/articles',
-    authorsPath = '/authors',
-    tagPath = '/tag',
+    pagePathPrefix = '/page',
+    articlePathPrefix = '/article',
+    authorsPathPrefix = '/author',
+    tagPathPrefix = '/tag',
+    defaultTag = 'all',
     authorsPage = true,
     pageLength = 12,
     sources = {},
     mailchimp = '',
+    tagNameAll = 'all',
+    tagNameUncategorized = 'uncategorized',
   } = themeOptions;
 
   const { data } = await graphql(`
@@ -73,6 +87,73 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
       }
     }
   `);
+
+
+  function formatTags(allTags) {
+    
+    function generateResult(arr){
+      var newArr = [];
+
+      for(var i=0;i<arr.length;i++){
+        // markdown tag inside frontmatter
+        if(arr[i].tags != null && arr[i].tags != undefined && arr[i].tags != ""){
+          //var currArticleTags = mdsArray[i].frontmatter.tags.toString().split(" ");
+          var currArticleTags = arr[i].tags;
+          // tag in one markdown file should not be duplicated;
+          currArticleTags = Array.from(new Set(currArticleTags));
+          // push a key-value object;
+          for(var a=0;a<currArticleTags.length;a++){
+            var currArticleTag = currArticleTags[a];
+            var obj = {}
+            obj['name'] = currArticleTag;
+            obj['times'] = 1;
+            newArr.push(obj)
+          }
+        }
+        else{
+          // push a key-value object without name;
+          var obj = {}
+          obj['name'] = "uncategorized";
+          obj['times'] = 1;
+          newArr.splice(0,0,obj);
+        }
+      }
+      var result = [];
+      // merge object with same name and merge times
+      newArr.forEach(function (obj) {
+        if (!this[obj.name]) {
+            this[obj.name] = { name: obj.name, times: 0 };
+            result.push(this[obj.name]);
+        }
+        this[obj.name].times += obj.times;
+      }, {});
+
+      const allTag = {
+        name:"all",
+        times:arr.length
+      }
+
+      result.splice(0,0,allTag);
+      
+      result = moveIndex(result, 1, result.length-1);
+      //console.log(result)
+      return result;
+    }
+
+    function moveIndex(input, from, to) {
+      let numberOfDeletedElm = 1;
+    
+      const elm = input.splice(from, numberOfDeletedElm)[0];
+    
+      numberOfDeletedElm = 0;
+
+      input.splice(to, numberOfDeletedElm, elm);
+      return input;
+    }
+
+    return generateResult(allTags);
+  }
+
 
   console.log(sources);
   // Defaulting to look at the local MDX files as sources.
@@ -96,7 +177,7 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
   }
 
   log('Config basePath', basePath);
-  if (authorsPage) log('Config authorsPath', authorsPath);
+  if (authorsPage) log('Config authorsPathPrefix', authorsPathPrefix);
 
   if (local) {
     try {
@@ -211,24 +292,21 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
 
   // TODO: grab data from graphQL
   // TODO: optim basePath
-  const path = slugify('all', tagPath);
-  var newPath = path + basePath;
-  newPath = newPath.substring(0,newPath.length - 1);
-
-  log('path',newPath);
+  // var tagPath = slugify(defaultTag, tagPathPrefix)
+  // log('path',tagPath);
 
   log('Creating', 'articles page');
   createPaginatedPages({
     edges: articlesThatArentSecret,
-    pathPrefix: newPath,
+    pathPrefix: basePath, //basePath
     createPage,
     pageLength,
     pageTemplate: templates.articles,
     buildPath: buildPaginatedPath,
     context: {
       authors,
-      newPath,
-      allTags: tags,
+      basePath, //basePath
+      allTags: formatTags(tags),
       allHeadings: headings,
       articleCounts: articles.length,
       skip: pageLength,
@@ -274,15 +352,19 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
       next = [...next, articlesThatArentSecret[0]];
     if (articlesThatArentSecret.length === 1) next = [];
 
+    // TODO
+    const articlePath = slugify(article.slug,articlePathPrefix);
+
+
     createPage({
-      path: article.slug,
+      path: articlePath, // article.slug
       component: templates.article,
       context: {
         article,
         authors: authorsThatWroteTheArticle,
-        articlePath,
-        permalink: `${data.site.siteMetadata.siteUrl}${article.slug}/`,
-        slug: article.slug,
+        basePath, //basePath
+        permalink: `${data.site.siteMetadata.siteUrl}${articlePathPrefix}${article.slug}/`,
+        slug: articlePath, //article.slug 
         id: article.id,
         title: article.title,
         tag: tags[index],
@@ -306,7 +388,7 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
         article =>
           article.author.toLowerCase().includes(author.name.toLowerCase()),
       );
-      const path = slugify(author.slug, authorsPath);
+      const authorPath = slugify(author.slug, authorsPathPrefix);
 
       createPaginatedPages({
         edges: articlesTheAuthorHasWritten,
@@ -317,7 +399,7 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
         buildPath: buildPaginatedPath,
         context: {
           author,
-          originalPath: path,
+          originalPath: authorPath,
           skip: pageLength,
           limit: pageLength,
         },

@@ -1,8 +1,8 @@
 /* eslint-disable no-prototype-builtins */
 
 const crypto = require(`crypto`);
-//const slugify = require('slugify');
 
+// TODO
 const slugify = function(str){
   str = str.replace(/\s+/g,'-') // replace spaces with dashes
   //str = str.replace(/[^a-zA-Z0-9_\u3400-\u9FBF\s-]/g,'');
@@ -25,6 +25,7 @@ module.exports = ({ node, actions, getNode, createNodeId }, themeOptions) => {
 
   // ///////////////// Utility functions ///////////////////
 
+  // TODO
   function generateArticlePermalink(slug, date) {
     const [year, month, day] = date.match(/\d{4}-\d{2}-\d{2}/)[0].split('-');
     const permalinkData = {
@@ -65,7 +66,7 @@ module.exports = ({ node, actions, getNode, createNodeId }, themeOptions) => {
     const fieldData = {
       ...node,
       authorsPage: themeOptions.authorsPage || false,
-      slug: generateSlug(basePath, 'authors', slug),
+      slug: generateSlug(basePath, 'author', slug),
     };
 
     createNode({
@@ -140,7 +141,7 @@ module.exports = ({ node, actions, getNode, createNodeId }, themeOptions) => {
       name: `slug`,
       value: generateSlug(
         basePath,
-        'authors',
+        'author',
         slugify(node.name, {
           lower: true,
         }),

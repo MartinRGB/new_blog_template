@@ -22,10 +22,13 @@ import { IPaginator } from "@types";
  */
 
 class Paginator extends Component<IPaginator, {}> {
+
+  //here
   maxPages = 3;
   count = this.props.pageCount;
   current = this.props.index;
   pageRoot = this.props.pathPrefix;
+  tags = this.props.allTags;
 
   get nextPath() {
     return this.getFullPath(this.current + 1);
@@ -119,13 +122,20 @@ class Paginator extends Component<IPaginator, {}> {
     } else {
       return n === 1 ? this.pageRoot : this.pageRoot + "/page/" + n;
     }
+    // if (this.pageRoot === "/") {
+    //   return n === 1 ? this.pageRoot + "pages/" + n: this.pageRoot + "pages/" + n;
+    // } else {
+    //   return n === 1 ? this.pageRoot + "/pages/" + n: this.pageRoot + "/pages/" + n;
+    // }
   };
 
   render() {
     const count = this.count;
     const current = this.current;
 
-    if (count <= 1) return null;
+    //here
+    console.log(this.tags);
+    if (count < 1) return null;
 
     const previousPath = this.previousPath;
     const nextPath = this.nextPath;
@@ -133,7 +143,7 @@ class Paginator extends Component<IPaginator, {}> {
     const hasPrevious = this.current > 1;
 
     return (
-      <>
+      <div>
         <Helmet>
           {hasPrevious && <link rel="prev" href={previousPath} />}
           {hasNext && <link rel="next" href={nextPath} />}
@@ -146,7 +156,7 @@ class Paginator extends Component<IPaginator, {}> {
           </MobileReference>
           {hasNext && <PageButton to={nextPath}>Next</PageButton>}
         </Frame>
-      </>
+      </div>
     );
   }
 }

@@ -1,4 +1,4 @@
-import React,{ useEffect }  from "react";
+import React,{ useEffect,useContext}  from "react";
 import styled from "@emotion/styled";
 import {css} from "@emotion/core";
 import { graphql, useStaticQuery } from "gatsby";
@@ -11,11 +11,12 @@ import mediaqueries from '@styles/media';
 
 import ArticlesHero from "../sections/articles/Articles.Hero";
 import ArticlesList from "../sections/articles/Articles.List";
+import ArticlesTag from "../sections/articles/Articles.Tag";
+import SelectedTagProvider from "../sections/articles/Articles.Tag.Context";
 
 import tw from 'twin.macro'
 
 import { Template } from "@types";
-import ArticlesTagFilter from "../sections/articles/Articles.TagFilter";
 
 // const ContainerParent = tw.div`
 //   bg-blue-500 w-full
@@ -26,108 +27,28 @@ import ArticlesTagFilter from "../sections/articles/Articles.TagFilter";
 //     padding: 15px;
 // `
 
-var selectedTags:string = 'all'
-
-
-class markdownTagInfoHelper {
-
-  public totalCounts:number;
-  public resultArray:Array<any> = [];
-  constructor(context:Array<any>) {
-    var mdsArray = context;
-    this.totalCounts = context.length;
-    this.resultArray = this.generateResult(mdsArray);
-  }
-
-  private generateResult(mdsArray:Array<any>){
-    var newArr:Array<any> = [];
-
-    for(var i=0;i<mdsArray.length;i++){
-      // markdown tag inside frontmatter
-      if(mdsArray[i].tags != null && mdsArray[i].tags != undefined && mdsArray[i].tags != ""){
-        //var currArticleTags = mdsArray[i].frontmatter.tags.toString().split(" ");
-        var currArticleTags = mdsArray[i].tags;
-        // tag in one markdown file should not be duplicated;
-        currArticleTags = Array.from(new Set(currArticleTags));
-        // push a key-value object;
-        for(var a=0;a<currArticleTags.length;a++){
-          var currArticleTag = currArticleTags[a];
-          var obj = {}
-          obj['name'] = currArticleTag;
-          obj['times'] = 1;
-          newArr.push(obj)
-        }
-      }
-      else{
-        // push a key-value object without name;
-        var obj = {}
-        obj['name'] = "未分类";
-        obj['times'] = 1;
-        newArr.splice(0,0,obj);
-      }
-    }
-    var result:Array<any> = [];
-    // merge object with same name and merge times
-    newArr.forEach(function (obj) {
-      if (!this[obj.name]) {
-          this[obj.name] = { name: obj.name, times: 0 };
-          result.push(this[obj.name]);
-      }
-      this[obj.name].times += obj.times;
-    }, {});
-
-    const allTag = {
-      name:"全部",
-      times:mdsArray.length
-    }
-
-    result.splice(0,0,allTag);
-    
-    result = this.moveIndex(result, 1, result.length-1);
-    //console.log(result)
-    return result;
-  }
-
-  moveIndex(input, from, to) {
-    let numberOfDeletedElm = 1;
-  
-    const elm = input.splice(from, numberOfDeletedElm)[0];
-  
-    numberOfDeletedElm = 0;
-
-    input.splice(to, numberOfDeletedElm, elm);
-    return input;
-  }
-}
-
 const ArticlesPage: Template = ({ location, pageContext }) => {
   const articles = pageContext.group;
   const authors = pageContext.additionalContext.authors;
-
-  console.log(pageContext)
-  let tagInfo = new markdownTagInfoHelper(pageContext.allTags);
+  const tags = pageContext.allTags;
+  //let tagInfo = new markdownTagInfoHelper(pageContext.allTags);
 
   useEffect(() => {
   }, []);
 
-
   return (
     <Layout>
-    {/* <div css={css`${tw`flex items-center justify-between px-1 py-3`}`}>
-      <h1>Hello, world!</h1>
-      <h2>I'm a flex item too!</h2>
-    </div> */}
-
       <SEO pathname={location.pathname} />
       <ArticlesHero authors={authors} />
-      <Section narrow>
-        <ArticlesTagFilter  tagInfo={tagInfo}></ArticlesTagFilter>
-        {/* <TagInfo>全部文章:{tagInfo.getTotalCounts()} {tagInfo.getTagInfo()}</TagInfo> */}
-        <ArticlesList articles={articles} sortByTags={selectedTags}/>
-        <ArticlesPaginator show={pageContext.pageCount > 1}>
-          <Paginator {...pageContext} />
-        </ArticlesPaginator>
-      </Section>
+      <SelectedTagProvider>
+        <Section narrow>
+          <ArticlesTag tags={tags}></ArticlesTag>
+          <ArticlesList articles={articles} tags={tags}/>
+          <ArticlesPaginator show={pageContext.pageCount >= 1}>
+            <Paginator {...pageContext}/>
+          </ArticlesPaginator>
+        </Section>
+      </SelectedTagProvider>
       <ArticlesGradient />
     </Layout>
   );

@@ -8,8 +8,10 @@ import Image, { ImagePlaceholder } from '@components/Image';
 
 import mediaqueries from '@styles/media';
 import { IArticle } from '@types';
+import { ITag } from '@types';
 
 import { GridLayoutContext } from './Articles.List.Context';
+import { SelectedTagContext } from './Articles.Tag.Context';
 
 /**
  * Tiles
@@ -29,11 +31,29 @@ interface ArticlesListProps {
   articles: IArticle[];
   alwaysShowAllDetails?: boolean;
   sortByTags?: string;
+  tags: ITag[];
 }
 
 interface ArticlesListItemProps {
   article: IArticle;
   narrow?: boolean;
+}
+
+// TODO
+function slugify(string, base) {
+  const slug = string
+  .toLowerCase()
+  .normalize('NFD')
+  .replace(/\s+/g,'-')
+  .replace(/(^-|-$)+/g, '');
+
+  // .toLowerCase()
+  // .normalize('NFD')
+  // .replace(/[\u0300-\u036F]/g, '')
+  // .replace(/[^a-z0-9]+/g, '-')
+  // .replace(/(^-|-$)+/g, '');
+
+  return `${base}/${slug}`.replace(/\/\/+/g, '/');
 }
 
 const ArticlesList: React.FC<ArticlesListProps> = ({
@@ -48,6 +68,10 @@ const ArticlesList: React.FC<ArticlesListProps> = ({
     GridLayoutContext,
   );
 
+  const { selectedTag, hasSelectedTag, setSelectedTag,getSelectedTag } = useContext(
+    SelectedTagContext,
+  ); 
+
   /**
    * We're taking the flat array of articles [{}, {}, {}...]
    * and turning it into an array of pairs of articles [[{}, {}], [{}, {}], [{}, {}]...]
@@ -57,17 +81,54 @@ const ArticlesList: React.FC<ArticlesListProps> = ({
     // if (index % 2 === 0) {
     //   result.push(array.slice(index, index + 2));
     // }
-    result.push(array[index])
+    if(isSelected(array[index].tags)){
+      result.push(array[index])
+    }
+    //result.push(array[index])
     return result;
   }, []);
 
   useEffect(() => {
 
     getGridLayout()
+    setSelectedTag('all')
+    getSelectedTag()
 
   }, []);
 
+  function isSelected(tags){
+    var result;
 
+    if(selectedTag === 'all'){
+      result = true;
+    }
+    else if(selectedTag === 'uncategorized'){
+      if(tags === null){
+        result = true;
+      }
+      else{
+        result = false;
+      }
+    }
+    else{
+      if(tags === null){
+        result = false;
+      }
+      else{
+        if(tags.includes(selectedTag)){
+          result = true;
+        }
+        else{
+          result = false;
+        }
+      }
+    }
+
+    return result;
+  }
+
+
+  // articlePairs 处理！
   return (
     <ArticlesListContainer id="Articles__Container"
       style={{ opacity: hasSetGridLayout ? 1 : 0 }}
@@ -76,8 +137,9 @@ const ArticlesList: React.FC<ArticlesListProps> = ({
     >
       {articlePairs.map((el,index) =>{
         const listIndex = index;
-        // console.log('233')
-        // console.log(el.tag)
+        //var isSelectedTag:boolean = isSelected(el.tags);
+        var isSelectedTag = true;
+
         return (
           <List
             key={index}
@@ -85,6 +147,7 @@ const ArticlesList: React.FC<ArticlesListProps> = ({
             hasOnlyOneArticle={hasOnlyOneArticle}
             reverse={false}
             listIndex={listIndex}
+            select={isSelectedTag}
           >
             <ListItem article={el} narrow={false} />
           </List>
@@ -115,6 +178,7 @@ export default ArticlesList;
 const ListItem: React.FC<ArticlesListItemProps> = ({ article, narrow }) => {
   if (!article) return null;
 
+  const articlePathPrefix = '/article';
 
   const { gridLayout } = useContext(GridLayoutContext);
   const hasOverflow = narrow && article.title.length > 35;
@@ -123,6 +187,8 @@ const ListItem: React.FC<ArticlesListItemProps> = ({ article, narrow }) => {
     imageSource &&
     Object.keys(imageSource).length !== 0 &&
     imageSource.constructor === Object;
+  // TODO
+  const articleSlug = slugify(article.slug, articlePathPrefix);
 
   var tagArray;
   var tagString = ''
@@ -134,7 +200,7 @@ const ListItem: React.FC<ArticlesListItemProps> = ({ article, narrow }) => {
   }
 
   return (
-    <ArticleLink to={article.slug} gridlayout={gridLayout} data-a11y="false">
+    <ArticleLink to={articleSlug} gridlayout={gridLayout} data-a11y="false">
   
         {gridLayout === 'simplest'?
           (<Item gridlayout={gridLayout} hasheroimage={hasHeroImage}>
@@ -331,9 +397,11 @@ const List = styled.div<{
   gridlayout: string;
   hasOnlyOneArticle: boolean;
   listIndex: number;
+  select:boolean;
 }>`
   // ${p => (p.gridlayout === 'tiles' ? listTile : listRow)}
   ${p => (p.gridlayout === 'simplest'? listSimplest: (p.gridlayout === 'tiles' ? listTiles : listRow))}
+  // display:${p =>(p.select?'inline-block':'none')};
 `;
 
 const listSimplest = p => css`
@@ -370,6 +438,8 @@ const listTiles = p => css`
     width:353px;
     margin-left:${p.listIndex%3 === 0 ? '0px' : (p.listIndex%3 === 1 ? '20px':'20px' )};
     margin-right:${p.listIndex%3 === 0 ? '20px' : (p.listIndex%3 === 1 ? '20px':'0px' )};
+    // margin-left:13.3px;
+    // margin-right:13.3px;
     flex: 1 0 calc(33% - 27px);
     max-width: calc(33% - 27px);
 
@@ -384,6 +454,8 @@ const listTiles = p => css`
       flex: 1 0 calc(50% - 20px);
       margin-left:${p.listIndex%2 === 0 ? '0px' : '20px'};
       margin-right:${p.listIndex%2 === 0 ? '20px' : '0px'};
+      // margin-left:10px;
+      // margin-right:10px;
       max-width: calc(50% - 20px);
 
       // &:hover,&:focus{

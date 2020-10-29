@@ -1,54 +1,48 @@
-import React, { useContext, useEffect,useState} from 'react';
+import React, { useContext, useEffect,useState,createContext} from 'react';
 import styled from '@emotion/styled';
 import throttle from "lodash/throttle";
 import { css } from '@emotion/core';
 import mediaqueries from "@styles/media";
-import { ITagInfo } from '@types';
+import { ITag } from '@types';
 import { Link } from 'gatsby';
+import { SelectedTagContext } from './Articles.Tag.Context';
 
 interface ArticlesTagFilterProps {
-  tagInfo: ITagInfo;
+  tags: ITag[];
 }
 
-const ArticlesTagFilter: React.FC<ArticlesTagFilterProps> = ({tagInfo }) => {
+const ArticlesTag: React.FC<ArticlesTagFilterProps> = ({tags}) => {
+    if (!tags) return null;
 
-    //const [states, setState] = useState<string>('init_State');
-  
+    const { selectedTag, hasSelectedTag, setSelectedTag,getSelectedTag } = useContext(
+      SelectedTagContext,
+    );
 
-    if (!tagInfo) return null;
-    // console.log(tagInfo)
-
-    const [isHovered, setIsHovered] = useState<boolean>(false);
-    const states = '全部';
-
-  
     useEffect(() => {
-      
+      setSelectedTag('all')
+      getSelectedTag()
     }, []);
 
-    const tagPairs = tagInfo.resultArray.reduce((result, value, index, array) => {
+    const tagPairs = tags.reduce((result, value, index, array) => {
       // if (index % 2 === 0) {
       //   result.push(array.slice(index, index + 2));
       // }
-      result.push(array[index])
+      result.push(array[index]);
       return result;
     }, []);
-
-    console.log(tagPairs)
-  
   
     return (
-        <TagFilterContainer onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}>
+        <TagFilterContainer>
           {tagPairs.map((el,index) =>{
+            var isActive:boolean = (hasSelectedTag && selectedTag === el.name);
             return (
               <TagContainer 
-                to={''} 
-                isselected={(states === el.name)} 
+                onClick={() => setSelectedTag(el.name)}
+                active={isActive} 
                 data-a11y="false" 
                 key={index}>
-                <NameData isselected={(states === el.name)}>{el.name}</NameData>
-                <NumData isselected={(states === el.name)}>{el.times}</NumData>
+                <NameData active={isActive}>{el.name}</NameData>
+                <NumData active={isActive}>{el.times}</NumData>
               </TagContainer>
             );
           })}
@@ -56,7 +50,10 @@ const ArticlesTagFilter: React.FC<ArticlesTagFilterProps> = ({tagInfo }) => {
     );
   };
 
-const TagFilterContainer = styled.div`
+const TagFilterContainer = styled.div<
+  { 
+  }
+>`
     display: flex;
     align-items: flex-start;
     flex-direction: row;
@@ -79,8 +76,10 @@ const TagFilterContainer = styled.div`
     `};
 `;
 
-const TagContainer = styled(Link)<
-  {isselected:boolean}
+const TagContainer = styled.button<
+  { 
+    active:boolean;
+  }
 >`
     display: inline-block;
     padding-left: 12px;
@@ -91,10 +90,10 @@ const TagContainer = styled(Link)<
     // margin-bottom: 12px;
     border-radius: 4px;
     height: 25px;
-    //background: ${p => (p.isselected? p.theme.colors.light_grey:'none')};
-    filter: ${p => (p.isselected? 'brightness(1.5)':'grayscale(1) brightness(1.5) blur(0.5px)')};
-    //transform: ${p => (p.isselected? 'scale(1.1)':'none')};
-    opacity: ${p => (p.isselected? '1':'0.66')};
+    //background: ${p => (p.active? p.theme.colors.light_grey:'none')};
+    filter: ${p => (p.active? 'brightness(1.5)':'grayscale(1) brightness(1.5) blur(0.5px)')};
+    //transform: ${p => (p.active? 'scale(1.1)':'none')};
+    opacity: ${p => (p.active? '1':'0.66')};
     transition: all 0.3s cubic-bezier(.02,.01,.47,1);
     ${mediaqueries.desktop`
     `};
@@ -106,21 +105,21 @@ const TagContainer = styled(Link)<
     `};
 
     &:hover{
-      filter: ${p => (p.isselected? 'brightness(1.5)':'grayscale(1) brightness(1) blur(0px)')};
+      filter: ${p => (p.active? 'brightness(1.5)':'grayscale(1) brightness(1) blur(0px)')};
       //transform: scale(1.1);
-      //opacity: ${p => (p.isselected? '1':'0.66')};
+      //opacity: ${p => (p.active? '1':'0.66')};
       //background: ${p => (p.theme.colors.light_grey)};
     }
 `;
 const NameData = styled.div<
-{isselected:boolean}
+{active:boolean}
 >`
     display: inline-block;
     font-size: 11px;
     font-weight: 600;
     transform: scale(0.9);
     transform-origin: left center;
-    color:${p => (p.isselected? p.theme.colors.primary:p.theme.colors.grey)};
+    color:${p => (p.active? p.theme.colors.primary:p.theme.colors.grey)};
     ${mediaqueries.desktop`
     `};
 
@@ -132,15 +131,15 @@ const NameData = styled.div<
 `;
 
 const NumData = styled.div<
-{isselected:boolean}
+{active:boolean}
 >`
     display: inline-block;
     font-size: 11px;
     font-weight: 500;
     transform: scale(0.9);
     transform-origin: right center;
-    color:${p => (p.isselected? p.theme.colors.primary:p.theme.colors.grey)};
-    opacity:${p => (p.isselected? '0.33':'0.53')};
+    color:${p => (p.active? p.theme.colors.primary:p.theme.colors.grey)};
+    opacity:${p => (p.active? '0.33':'0.53')};
     margin-left: 2px;
     ${mediaqueries.desktop`
     `};
@@ -152,4 +151,4 @@ const NumData = styled.div<
     `};
 `;
   
-  export default ArticlesTagFilter;
+  export default ArticlesTag;
