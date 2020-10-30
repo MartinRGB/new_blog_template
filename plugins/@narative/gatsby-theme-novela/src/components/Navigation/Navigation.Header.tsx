@@ -6,7 +6,7 @@ import { useColorMode } from "theme-ui";
 import Section from "@components/Section";
 import Logo from "@components/Logo";
 import throttle from "lodash/throttle";
-import Icons from "@icons";
+import Icons from "@nativeIcons";
 import mediaqueries from "@styles/media";
 import {
   copyToClipboard,
