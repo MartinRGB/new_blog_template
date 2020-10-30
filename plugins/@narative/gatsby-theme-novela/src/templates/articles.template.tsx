@@ -11,8 +11,10 @@ import mediaqueries from '@styles/media';
 
 import ArticlesHero from "../sections/articles/Articles.Hero";
 import ArticlesList from "../sections/articles/Articles.List";
+import ArticlesPaginator from "../sections/articles/Articles.Paginator";
 import ArticlesTag from "../sections/articles/Articles.Tag";
 import SelectedTagProvider from "../sections/articles/Articles.Tag.Context";
+import { SelectedTagContext } from '../sections/articles/Articles.Tag.Context';
 
 import tw from 'twin.macro'
 
@@ -31,7 +33,9 @@ const ArticlesPage: Template = ({ location, pageContext }) => {
   const articles = pageContext.group;
   const authors = pageContext.additionalContext.authors;
   const tags = pageContext.allTags;
-  //let tagInfo = new markdownTagInfoHelper(pageContext.allTags);
+  const { selectedTag, hasSelectedTag, setSelectedTag,getSelectedTag } = useContext(
+    SelectedTagContext,
+  );
 
   useEffect(() => {
   }, []);
@@ -42,11 +46,12 @@ const ArticlesPage: Template = ({ location, pageContext }) => {
       <ArticlesHero authors={authors} />
       <SelectedTagProvider>
         <Section narrow>
-          <ArticlesTag tags={tags}></ArticlesTag>
-          <ArticlesList articles={articles} tags={tags}/>
-          <ArticlesPaginator show={pageContext.pageCount >= 1}>
-            <Paginator {...pageContext}/>
-          </ArticlesPaginator>
+          <ArticlesTag tags={tags} pageContext={pageContext}></ArticlesTag>
+          <ArticlesList pageContext={pageContext} articles={pageContext.allArticles} isAuthor={false}/>
+          <ArticlesPaginatorContainer show={pageContext.pageCount >= 1}>
+            {/* <Paginator {...pageContext}/> */}
+            <ArticlesPaginator pageContext={pageContext}/>
+          </ArticlesPaginatorContainer>
         </Section>
       </SelectedTagProvider>
       <ArticlesGradient />
@@ -78,7 +83,7 @@ const ArticlesGradient = styled.div`
   transition: ${p => p.theme.colorModeTransition};
 `;
 
-const ArticlesPaginator = styled.div<{ show: boolean }>`
+const ArticlesPaginatorContainer = styled.div<{ show: boolean }>`
   ${p => p.show && `margin-top: 40px;`}
   ${mediaqueries.phablet`
     margin-top:40px;

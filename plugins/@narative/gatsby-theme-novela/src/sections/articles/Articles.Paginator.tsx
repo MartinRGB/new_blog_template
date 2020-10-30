@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React ,{ useContext, useEffect}from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/core";
 import { Link } from "gatsby";
@@ -6,8 +6,7 @@ import { Helmet } from "react-helmet";
 
 import mediaqueries from "@styles/media";
 import { range } from "@utils";
-
-import { IPaginator } from "@types";
+import { SelectedTagContext } from './Articles.Tag.Context';
 
 /**
  * <Paginator />
@@ -21,42 +20,80 @@ import { IPaginator } from "@types";
  * Receives the gatsby-paginator props
  */
 
-class Paginator extends Component<IPaginator, {}> {
+interface ArticlesPaginatorProps {
+  pageContext:any;
+}
 
-  //here
-  maxPages = 3;
-  count = this.props.pageCount;
-  current = this.props.index;
-  pageRoot = this.props.pathPrefix;
-  tags = this.props.allTags;
+interface PaginatorPageLinkProps {
+  pageContext:any;
+}
 
-  get nextPath() {
-    return this.getFullPath(this.current + 1);
+const ArticlesPaginator: React.FC<ArticlesPaginatorProps> = ({
+  pageContext,
+}) => {
+  
+  const { selectedTag, hasSelectedTag, setSelectedTag,getSelectedTag } = useContext(
+    SelectedTagContext,
+  ); 
+
+  useEffect(() => {
+    getSelectedTag()
+  }, []);
+
+  const maxPages = 3;
+  const totalArticleWithTagCounts = pageContext.allTags.reduce((result, value, index, array) => {
+    if(array[index].name === selectedTag){
+      return array[index].times
+    }
+    return result;
+  }, []);
+  const totalCounts = totalArticleWithTagCounts; // article with currentTags  (orig is [pageContext.allArticles.length])
+  const pageLimit = pageContext.limit;
+  const maxPage = Math.ceil(totalCounts/pageLimit);
+  const count = maxPage; //pageContext.pageCount
+  const current = Math.min(maxPage,pageContext.index); //pageContext.index
+  const pageRoot = pageContext.pathPrefix;
+  const tags = pageContext.allTags;
+  const hasNext = current < count;
+  const hasPrevious = current > 1;
+
+  function nextPath() {
+    return getFullPath(current + 1);
   }
 
-  get previousPath() {
-    return this.getFullPath(this.current - 1);
+  function previousPath() {
+    return getFullPath(current - 1);
   }
 
-  /**
-   * Utility function to return a 1 ... 5 6 7 ... 10 style pagination
-   */
-  get getPageLinks() {
-    const current = this.current;
-    const count = this.count;
-    const maxPages = this.maxPages;
+  function getFullPath(n: number){
+    if (pageRoot === "/") {
+      return n === 1 ? pageRoot : pageRoot + "page/" + n;
+    } else {
+      return n === 1 ? pageRoot : pageRoot + "/page/" + n;
+    }
+  };
+
+  function getPageLinks(){
+    if (count < 1) return null;
 
     // Current is the page we're on
     // We want to show current - 1, current, current + 1
     // Of course if we're on page 1, we don't want a page 0
     const previousPage = current === 1 ? current : current - 1;
 
+
+
+
     // Now create a range of numbers from the previousPage to the total pages (count)
     const pagesRange = range(previousPage, count + 1 - previousPage);
 
+    console.log(previousPage)
+    console.log(count);
+    console.log(pagesRange);
+
     // We might need to truncate that pagesRange if it's
     // more than the max pages we wish to display (3)
-    const truncatedRange: Array<number | null> = pagesRange.slice(0, maxPages);
+    var truncatedRange: Array<number | null> = pagesRange.slice(0, maxPages);
 
     // Throughout this function we might add a null to our pages range.
     // When it comes to rendering our range if we find a null we'll add a spacer.
@@ -93,7 +130,9 @@ class Paginator extends Component<IPaginator, {}> {
       truncatedRange.push(count);
     }
 
-    return [...new Set(truncatedRange)].map((page: number | null, i) =>
+    truncatedRange = Array.from(new Set(truncatedRange));
+
+    return truncatedRange.map((page: number | null, i) =>
       page === null ? (
         // If you find a null in the truncated array then add a spacer
         <Spacer key={`PaginatorPage_spacer_${i}`} aria-hidden={true} />
@@ -101,69 +140,36 @@ class Paginator extends Component<IPaginator, {}> {
         // Otherwise render a PageButton
         <PageNumberBUtton
           key={`PaginatorPage_${page}`}
-          to={this.getFullPath(page)}
+          to={getFullPath(page)}
           style={{ opacity: current === page ? 1 : 0.3 }}
           className="Paginator__pageLink"
         >
           {page}
         </PageNumberBUtton>
       ),
-    );
+    )
   }
+ 
+  return (
+    <div>
+      <Helmet>
+        {hasPrevious && <link rel="prev" href={previousPath()} />}
+        {hasNext && <link rel="next" href={nextPath()} />}
+      </Helmet>
+      <Frame>
+        {hasPrevious && <PageButton to={previousPath()}>Prev</PageButton>}
+        {getPageLinks()}
+        <MobileReference aria-hidden="true">
+          <em>{current}</em>&nbsp;of {count}
+        </MobileReference>
+        {hasNext && <PageButton to={nextPath()}>Next</PageButton>}
+      </Frame>
+    </div>
+  );
 
-  /**
-   * Utility to turn an index in to a page path.
-   * All it really does is glue the page path to the front,
-   * but note there's special behaviour for page 1 where the URL should be / not /page/1
-   */
-  getFullPath = (n: number) => {
-    if (this.pageRoot === "/") {
-      return n === 1 ? this.pageRoot : this.pageRoot + "page/" + n;
-    } else {
-      return n === 1 ? this.pageRoot : this.pageRoot + "/page/" + n;
-    }
-    // if (this.pageRoot === "/") {
-    //   return n === 1 ? this.pageRoot + "pages/" + n: this.pageRoot + "pages/" + n;
-    // } else {
-    //   return n === 1 ? this.pageRoot + "/pages/" + n: this.pageRoot + "/pages/" + n;
-    // }
-  };
-
-
-  render() {
-    const count = this.count;
-    const current = this.current;
-
-    //here
-    //console.log(this.tags);
-    if (count < 1) return null;
-
-    const previousPath = this.previousPath;
-    const nextPath = this.nextPath;
-    const hasNext = this.current < this.count;
-    const hasPrevious = this.current > 1;
-    
-    
-    return (
-      <div>
-        <Helmet>
-          {hasPrevious && <link rel="prev" href={previousPath} />}
-          {hasNext && <link rel="next" href={nextPath} />}
-        </Helmet>
-        <Frame>
-          {hasPrevious && <PageButton to={previousPath}>Prev</PageButton>}
-          {this.getPageLinks}
-          <MobileReference aria-hidden="true">
-            <em>{current}</em>&nbsp;of {count}
-          </MobileReference>
-          {hasNext && <PageButton to={nextPath}>Next</PageButton>}
-        </Frame>
-      </div>
-    );
-  }
 }
 
-export default Paginator;
+export default ArticlesPaginator;
 
 const paginationItemMixin = p => css`
   line-height: 1;

@@ -71,7 +71,7 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
     tagPathPrefix = '/tag',
     defaultTag = 'all',
     authorsPage = true,
-    pageLength = 12,
+    pageLength = 6,
     sources = {},
     mailchimp = '',
     tagNameAll = 'all',
@@ -254,13 +254,11 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
     ...dataSources.contentful.tags,
     ...dataSources.netlify.tags,
   ].sort(byDate);
-
-
   
-  articles.forEach((article, index) => {
-    log('article' + index.toString(), article);
-    log('tag' + index.toString(), tags[index]);
-  });
+  // articles.forEach((article, index) => {
+  //   log('article' + index.toString(), article);
+  //   log('tag' + index.toString(), tags[index]);
+  // });
 
   const articlesThatArentSecret = articles.filter(article => !article.secret);
   // Combining together all the authors from different sources
@@ -309,6 +307,7 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
       allTags: formatTags(tags),
       allHeadings: headings,
       articleCounts: articles.length,
+      allArticles: articles,
       skip: pageLength,
       limit: pageLength,
     },

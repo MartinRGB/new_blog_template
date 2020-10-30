@@ -5,6 +5,9 @@ export var SelectedTagContext = createContext({
   hasSelectedTag: false,
   setSelectedTag: (tag: string) => {},
   getSelectedTag: () => {},
+
+  // previousTag: 'all',
+  // setPreviousTag: (tag: string) => {},
 });
 
 var SelectedTagProvider: React.FC<{}> = ({ children }) => {
@@ -16,12 +19,18 @@ var SelectedTagProvider: React.FC<{}> = ({ children }) => {
   function setSelectedTagAndSave(tag: string) {
     localStorage.setItem("selectedTag", tag || initialSelectedTag);
     setSelectedTag(tag);
+    //setPreviousTagAndSave(tag);
   }
 
   function getSelectedTagAndSave() {
     setSelectedTag(localStorage.getItem("selectedTag") || initialSelectedTag);
     setHasSelectedTag(true);
   }
+
+  // function setPreviousTagAndSave(tag: string) {
+  //   localStorage.setItem("previousTag", tag);
+  // }
+
 
   return (
     <SelectedTagContext.Provider
@@ -30,6 +39,9 @@ var SelectedTagProvider: React.FC<{}> = ({ children }) => {
         hasSelectedTag,
         setSelectedTag: setSelectedTagAndSave,
         getSelectedTag: getSelectedTagAndSave,
+
+        // previousTag:localStorage.getItem("previousTag"),
+        // setPreviousTag: setPreviousTagAndSave,
       }}
     >
       {children}

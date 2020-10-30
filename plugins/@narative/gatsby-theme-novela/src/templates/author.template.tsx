@@ -10,6 +10,7 @@ import AuthorHero from "../sections/author/Author.Hero";
 import AuthorArticles from "../sections/author/Author.Articles";
 
 import { Template } from "@types";
+import mediaqueries from '@styles/media';
 
 const ArticlesPage: Template = ({ location, pageContext }) => {
   const author = pageContext.additionalContext.author;
@@ -24,10 +25,11 @@ const ArticlesPage: Template = ({ location, pageContext }) => {
       />
       <Section narrow>
         <AuthorHero author={author} />
-        <AuthorArticles articles={articles} />
-        <AuthorPaginator>
+        <AuthorArticles pageContext={pageContext} />
+        <AuthorPaginatorContainer show={pageContext.pageCount >= 1}>
           <Paginator {...pageContext} />
-        </AuthorPaginator>
+        </AuthorPaginatorContainer>
+
       </Section>
       <AuthorsGradient />
     </Layout>
@@ -48,6 +50,11 @@ const AuthorsGradient = styled.div`
   transition: ${p => p.theme.colorModeTransition};
 `;
 
-const AuthorPaginator = styled.div`
-  text-align: center;
+const AuthorPaginatorContainer = styled.div<{ show: boolean }>`
+  ${p => p.show && `margin-top: 40px;`}
+  ${mediaqueries.phablet`
+    margin-top:40px;
+    padding-left: 1em;
+  `}
 `;
+

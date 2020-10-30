@@ -3,6 +3,8 @@ title: My first post using Novela by Narative7
 author: MartinRGB
 date: 2019-04-30
 hero: ./images/4.jpeg
+tags:
+    - 如果你喜欢前端，那就跟我一起，我之所以这样 哈哈哈 
 ---
 
 My first post using `@narative/gatsby-theme-novela`. Novela is built by the team at [Narative](https://narative.co), and built for everyone that loves the web.

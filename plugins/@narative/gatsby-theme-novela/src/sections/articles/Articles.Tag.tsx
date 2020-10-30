@@ -9,17 +9,17 @@ import { SelectedTagContext } from './Articles.Tag.Context';
 
 interface ArticlesTagFilterProps {
   tags: ITag[];
+  pageContext:any;
 }
 
-const ArticlesTag: React.FC<ArticlesTagFilterProps> = ({tags}) => {
+const ArticlesTag: React.FC<ArticlesTagFilterProps> = ({tags,pageContext}) => {
     if (!tags) return null;
 
-    const { selectedTag, hasSelectedTag, setSelectedTag,getSelectedTag } = useContext(
+    const { selectedTag, hasSelectedTag, setSelectedTag,getSelectedTag} = useContext(
       SelectedTagContext,
     );
 
     useEffect(() => {
-      setSelectedTag('all')
       getSelectedTag()
     }, []);
 
@@ -33,11 +33,14 @@ const ArticlesTag: React.FC<ArticlesTagFilterProps> = ({tags}) => {
   
     return (
         <TagFilterContainer>
-          {tagPairs.map((el,index) =>{
+          {tagPairs.map((el,index) =>{      
             var isActive:boolean = (hasSelectedTag && selectedTag === el.name);
             return (
               <TagContainer 
-                onClick={() => setSelectedTag(el.name)}
+                onClick={() => {
+                  setSelectedTag(el.name)
+                }}
+                to={pageContext.pathPrefix}
                 active={isActive} 
                 data-a11y="false" 
                 key={index}>
@@ -76,7 +79,7 @@ const TagFilterContainer = styled.div<
     `};
 `;
 
-const TagContainer = styled.button<
+const TagContainer = styled(Link)<
   { 
     active:boolean;
   }

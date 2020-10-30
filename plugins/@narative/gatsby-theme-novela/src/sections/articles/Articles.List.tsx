@@ -30,8 +30,9 @@ import { SelectedTagContext } from './Articles.Tag.Context';
 interface ArticlesListProps {
   articles: IArticle[];
   alwaysShowAllDetails?: boolean;
-  sortByTags?: string;
-  tags: ITag[];
+  // tags: ITag[];
+  pageContext:any;
+  isAuthor?:boolean;
 }
 
 interface ArticlesListItemProps {
@@ -59,6 +60,8 @@ function slugify(string, base) {
 const ArticlesList: React.FC<ArticlesListProps> = ({
   articles,
   alwaysShowAllDetails,
+  pageContext,
+  isAuthor,
 }) => {
 
   if (!articles) return null;
@@ -67,33 +70,53 @@ const ArticlesList: React.FC<ArticlesListProps> = ({
   const { gridLayout = 'tiles', hasSetGridLayout, getGridLayout } = useContext(
     GridLayoutContext,
   );
-
   const { selectedTag, hasSelectedTag, setSelectedTag,getSelectedTag } = useContext(
     SelectedTagContext,
   ); 
 
-  /**
-   * We're taking the flat array of articles [{}, {}, {}...]
-   * and turning it into an array of pairs of articles [[{}, {}], [{}, {}], [{}, {}]...]
-   * This makes it simpler to create the grid we want
-   */
-  const articlePairs = articles.reduce((result, value, index, array) => {
-    // if (index % 2 === 0) {
-    //   result.push(array.slice(index, index + 2));
-    // }
-    if(isSelected(array[index].tags)){
+  var articlePairs;
+
+  if(isAuthor){
+    articlePairs = articles.reduce((result, value, index, array) => {
+      // if (index % 2 === 0) {
+      //   result.push(array.slice(index, index + 2));
+      // }
       result.push(array[index])
-    }
-    //result.push(array[index])
-    return result;
-  }, []);
+      return result;
+    }, []);
+  }
+  else{
+    const currentIndex = pageContext.index;
+    const pageLimit = pageContext.limit;
+
+    /**
+     * We're taking the flat array of articles [{}, {}, {}...]
+     * and turning it into an array of pairs of articles [[{}, {}], [{}, {}], [{}, {}]...]
+     * This makes it simpler to create the grid we want
+     */
+
+     // Filt data with selectedTags
+    articlePairs = articles.reduce((result, value, index, array) => {
+      if(isSelected(array[index].tags)){
+        result.push(array[index])
+      }
+      return result;
+    }, []);
+
+    // Limit data's length to pageLimit
+    articlePairs = articlePairs.reduce((result, value, index, array) => {
+
+      if(index >= (currentIndex-1)*(pageLimit) && index<(currentIndex)*(pageLimit)){
+        result.push(array[index])
+      }
+      return result;
+    }, []);
+  }
+
 
   useEffect(() => {
-
     getGridLayout()
-    setSelectedTag('all')
     getSelectedTag()
-
   }, []);
 
   function isSelected(tags){
@@ -127,8 +150,6 @@ const ArticlesList: React.FC<ArticlesListProps> = ({
     return result;
   }
 
-
-  // articlePairs 处理！
   return (
     <ArticlesListContainer id="Articles__Container"
       style={{ opacity: hasSetGridLayout ? 1 : 0 }}
@@ -913,7 +934,13 @@ const TagData = styled.div<{
   font-size:11px;
   margin-bottom:${p => (p.gridlayout === 'tiles' ? '0px' : '8px')};
   transform:scale(0.9);
+  transform-origin: left center;
   position:${p => (p.gridlayout === 'tiles' ? 'absolute' : '')};
+  white-space: nowrap;
+  overflow:${p => (p.gridlayout === 'tiles' ? 'hidden' : 'none')};
+  text-overflow: ellipsis;
+  max-width: 172px;
+
 `;
 
 // ####### ArticleLink #######

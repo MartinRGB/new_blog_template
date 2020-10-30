@@ -7,15 +7,16 @@ import { IArticle } from "@types";
 import ArticlesList from "../articles/Articles.List";
 
 interface AuthorArticlesProps {
-  articles: IArticle[];
+  // articles: IArticle[];
+  pageContext:any;
 }
 
-const AuthorArticles: React.FC<AuthorArticlesProps> = ({ articles }) => {
+const AuthorArticles: React.FC<AuthorArticlesProps> = ({ pageContext }) => {
   return (
     // <AuthorArticlesContainer>
     //   <ArticlesList articles={articles} alwaysShowAllDetails />
     // </AuthorArticlesContainer>
-    <ArticlesList articles={articles} alwaysShowAllDetails />
+    <ArticlesList pageContext={pageContext} alwaysShowAllDetails articles={pageContext.group} isAuthor={true} />
   );
 };
 
